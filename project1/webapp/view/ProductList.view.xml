@@ -1,6 +1,7 @@
 <mvc:View controllerName="project1.controller.ProductList"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
+    <Page id="productList" title="{i18n>productListTitle}">
+        <Button id="listButton" text="test"></Button>
     </Page>
 </mvc:View>

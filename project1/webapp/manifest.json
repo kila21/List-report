@@ -75,9 +75,16 @@
       "routes": [
         {
           "name": "RouteProductList",
-          "pattern": ":?query:",
+          "pattern": "",
           "target": [
             "TargetProductList"
+          ]
+        },
+        {
+          "name": "RouteProductDetails",
+          "pattern": "ProductDetails",
+          "target": [
+            "TargetProductDetails"
           ]
         }
       ],
@@ -85,6 +92,10 @@
         "TargetProductList": {
           "id": "ProductList",
           "name": "ProductList"
+        },
+        "TargetProductDetails": {
+          "id": "ProductDetails",
+          "name": "ProductDetails"
         }
       }
     },
