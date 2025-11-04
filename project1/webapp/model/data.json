@@ -1,0 +1,375 @@
+[
+  {
+    "id": "prod_001",
+    "name": "Smartphone X Pro",
+    "description": "High-performance smartphone with advanced camera features.",
+    "rating": 5,
+    "releaseDate": "2024-03-15",
+    "discountDate": "2025-01-01",
+    "price": 999.99,
+    "categories": [
+      {
+        "id": "cat_001",
+        "name": "Electronics"
+      },
+      {
+        "id": "cat_003",
+        "name": "Mobile Devices"
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "sup_001",
+        "name": "TechGlobal Inc.",
+        "street": "123 Innovation Drive",
+        "city": "San Jose",
+        "state": "CA",
+        "zipCode": 95123,
+        "country": "USA"
+      }
+    ],
+    "comments": [
+      {
+        "id": "com_001",
+        "comment": "Excellent phone, fast shipping!"
+      },
+      {
+        "id": "com_002",
+        "comment": "Camera quality is incredible."
+      }
+    ]
+  },
+  {
+    "id": "prod_002",
+    "name": "Smart Watch Series 7",
+    "description": "Fitness tracking and smart notifications on your wrist.",
+    "rating": 4,
+    "releaseDate": "2024-06-20",
+    "discountDate": "2025-02-15",
+    "price": 249.00,
+    "categories": [
+      {
+        "id": "cat_001",
+        "name": "Electronics"
+      },
+      {
+        "id": "cat_004",
+        "name": "Wearable Tech"
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "sup_002",
+        "name": "Wearable Solutions LLC",
+        "street": "45 Tech Park Road",
+        "city": "Austin",
+        "state": "TX",
+        "zipCode": 78701,
+        "country": "USA"
+      }
+    ],
+    "comments": [
+      {
+        "id": "com_003",
+        "comment": "Good for tracking steps, battery life could be better."
+      }
+    ]
+  },
+  {
+    "id": "prod_003",
+    "name": "Wireless Noise-Cancelling Headphones",
+    "description": "Immersive sound experience with active noise cancellation.",
+    "rating": 5,
+    "releaseDate": "2024-09-01",
+    "discountDate": "2025-03-01",
+    "price": 199.50,
+    "categories": [
+      {
+        "id": "cat_001",
+        "name": "Electronics"
+      },
+      {
+        "id": "cat_005",
+        "name": "Audio Devices"
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "sup_003",
+        "name": "Soundscape Audio",
+        "street": "789 Harmony Lane",
+        "city": "London",
+        "state": "ENG",
+        "zipCode": 10001,
+        "country": "UK"
+      }
+    ],
+    "comments": [
+      {
+        "id": "com_004",
+        "comment": "Best headphones I've ever owned. Worth every penny."
+      }
+    ]
+  },
+  {
+    "id": "prod_004",
+    "name": "4K Ultra HD Smart TV 55-inch",
+    "description": "Stunning visuals and smart TV features for your living room.",
+    "rating": 4,
+    "releaseDate": "2024-10-10",
+    "discountDate": "2025-04-10",
+    "price": 799.00,
+    "categories": [
+      {
+        "id": "cat_001",
+        "name": "Electronics"
+      },
+      {
+        "id": "cat_006",
+        "name": "Home Entertainment"
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "sup_004",
+        "name": "Visionary Displays",
+        "street": "321 Pixel Plaza",
+        "city": "Tokyo",
+        "state": "TYO",
+        "zipCode": 1000001,
+        "country": "Japan"
+      }
+    ],
+    "comments": [
+      {
+        "id": "com_005",
+        "comment": "Great picture, easy to set up."
+      }
+    ]
+  },
+  {
+    "id": "prod_005",
+    "name": "Portable Bluetooth Speaker",
+    "description": "Compact and powerful speaker for music on the go.",
+    "rating": 4,
+    "releaseDate": "2024-02-01",
+    "discountDate": "2024-12-25",
+    "price": 89.99,
+    "categories": [
+      {
+        "id": "cat_001",
+        "name": "Electronics"
+      },
+      {
+        "id": "cat_005",
+        "name": "Audio Devices"
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "sup_001",
+        "name": "TechGlobal Inc.",
+        "street": "123 Innovation Drive",
+        "city": "San Jose",
+        "state": "CA",
+        "zipCode": 95123,
+        "country": "USA"
+      }
+    ],
+    "comments": [
+      {
+        "id": "com_006",
+        "comment": "Surprising bass for its size. Good battery life."
+      }
+    ]
+  },
+  {
+    "id": "prod_006",
+    "name": "Gaming Laptop Titan",
+    "description": "Unleash your gaming potential with this high-end laptop.",
+    "rating": 5,
+    "releaseDate": "2024-08-01",
+    "discountDate": "2025-01-30",
+    "price": 1899.99,
+    "categories": [
+      {
+        "id": "cat_001",
+        "name": "Electronics"
+      },
+      {
+        "id": "cat_007",
+        "name": "Computers"
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "sup_005",
+        "name": "MegaByte Systems",
+        "street": "55 Gaming Avenue",
+        "city": "Berlin",
+        "state": "BE",
+        "zipCode": 10115,
+        "country": "Germany"
+      }
+    ],
+    "comments": [
+      {
+        "id": "com_007",
+        "comment": "Runs all my games smoothly at max settings."
+      },
+      {
+        "id": "com_008",
+        "comment": "A bit heavy, but performance is unmatched."
+      }
+    ]
+  },
+  {
+    "id": "prod_007",
+    "name": "Smart Home Security Camera",
+    "description": "Keep an eye on your home with remote access and alerts.",
+    "rating": 4,
+    "releaseDate": "2024-05-25",
+    "discountDate": "2025-02-01",
+    "price": 129.00,
+    "categories": [
+      {
+        "id": "cat_008",
+        "name": "Smart Home"
+      },
+      {
+        "id": "cat_001",
+        "name": "Electronics"
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "sup_002",
+        "name": "Wearable Solutions LLC",
+        "street": "45 Tech Park Road",
+        "city": "Austin",
+        "state": "TX",
+        "zipCode": 78701,
+        "country": "USA"
+      }
+    ],
+    "comments": [
+      {
+        "id": "com_009",
+        "comment": "Easy to install, clear picture quality."
+      }
+    ]
+  },
+  {
+    "id": "prod_008",
+    "name": "Robot Vacuum Cleaner",
+    "description": "Automated cleaning for a spotless home.",
+    "rating": 3,
+    "releaseDate": "2024-01-15",
+    "discountDate": "2024-11-30",
+    "price": 349.99,
+    "categories": [
+      {
+        "id": "cat_008",
+        "name": "Smart Home"
+      },
+      {
+        "id": "cat_009",
+        "name": "Home Appliances"
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "sup_006",
+        "name": "CleanTech Innovations",
+        "street": "87 Robot Way",
+        "city": "Seoul",
+        "state": "SL",
+        "zipCode": 40520,
+        "country": "South Korea"
+      }
+    ],
+    "comments": [
+      {
+        "id": "com_010",
+        "comment": "Good for daily maintenance, but struggles with thick carpets."
+      }
+    ]
+  },
+  {
+    "id": "prod_009",
+    "name": "Digital Drawing Tablet Pro",
+    "description": "Unleash your creativity with precise digital artistry.",
+    "rating": 5,
+    "releaseDate": "2024-07-01",
+    "discountDate": "2025-03-20",
+    "price": 599.00,
+    "categories": [
+      {
+        "id": "cat_001",
+        "name": "Electronics"
+      },
+      {
+        "id": "cat_007",
+        "name": "Computers"
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "sup_003",
+        "name": "Soundscape Audio",
+        "street": "789 Harmony Lane",
+        "city": "London",
+        "state": "ENG",
+        "zipCode": 10001,
+        "country": "UK"
+      }
+    ],
+    "comments": [
+      {
+        "id": "com_011",
+        "comment": "Perfect for graphic designers, very responsive."
+      }
+    ]
+  },
+  {
+    "id": "prod_010",
+    "name": "Coffee Maker Elite",
+    "description": "Brew your perfect cup of coffee every morning.",
+    "rating": 4,
+    "releaseDate": "2024-04-01",
+    "discountDate": "2024-12-01",
+    "price": 149.99,
+    "categories": [
+      {
+        "id": "cat_009",
+        "name": "Home Appliances"
+      },
+      {
+        "id": "cat_010",
+        "name": "Kitchenware"
+      }
+    ],
+    "suppliers": [
+      {
+        "id": "sup_007",
+        "name": "Gourmet Kitchenware Co.",
+        "street": "10 Bean Road",
+        "city": "Paris",
+        "state": "IDF",
+        "zipCode": 75001,
+        "country": "France"
+      }
+    ],
+    "comments": [
+      {
+        "id": "com_012",
+        "comment": "Makes great coffee, easy to clean."
+      },
+      {
+        "id": "com_013",
+        "comment": "A bit noisy during brewing."
+      }
+    ]
+  }
+]
+
