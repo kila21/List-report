@@ -1,10 +1,40 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller"
-], (Controller) => {
+    "project1/controller/BaseController",
+    "project1/model/productModel",
+    "project1/model/formatter",
+	"sap/ui/model/json/JSONModel"
+], (
+    BaseController,
+	productModel,
+	formatter,
+	JSONModel
+) => {
     "use strict";
 
-    return Controller.extend("project1.controller.ProductList", {
+    return BaseController.extend("project1.controller.ProductList", {
+        formatter: formatter,
+        
         onInit() {
+            // products model
+            const oProductsModel = productModel.createProductModel()
+            this.setModel(oProductsModel, "productsModel")
+
+            // for delete button on the view. default is false.
+            const oModel = new JSONModel({
+                deleteEnabled: false
+            })
+            this.setModel(oModel, "deleteButtonModel")
         },
+
+        onProductsTableSelectionChange: function(oEvent) {
+            const oTable = oEvent.getSource()
+            const iSelectedItems = oTable.getSelectedItems().length
+            
+            if(iSelectedItems > 0) {
+                this.getModel("deleteButtonModel").setProperty('/deleteEnabled', true)
+            }else {
+                this.getModel("deleteButtonModel").setProperty('/deleteEnabled', false)
+            }
+        }
     });
 });
