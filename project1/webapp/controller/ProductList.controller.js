@@ -2,17 +2,20 @@ sap.ui.define([
     "project1/controller/BaseController",
     "project1/model/productModel",
     "project1/model/formatter",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+    "sap/ui/core/Fragment"
 ], (
     BaseController,
 	productModel,
 	formatter,
-	JSONModel
+	JSONModel,
+	Fragment
 ) => {
     "use strict";
 
     return BaseController.extend("project1.controller.ProductList", {
         formatter: formatter,
+        _oDialog: null,
         /**
          * @override
          * @description
@@ -48,12 +51,58 @@ sap.ui.define([
         onProductsTableSelectionChange: function(oEvent) {
             const oTable = oEvent.getSource()
             const iSelectedItems = oTable.getSelectedItems().length
-            
             if(iSelectedItems > 0) {
-                this.getModel("deleteButtonModel").setProperty('/deleteEnabled', true)
+                this.getModel("deleteButtonModel").setProperty("/deleteEnabled", true)
             }else {
-                this.getModel("deleteButtonModel").setProperty('/deleteEnabled', false)
+                this.getModel("deleteButtonModel").setProperty("/deleteEnabled", false)
             }
+        },
+
+        /**
+         * @param {sap.ui.base.Event} oEvent press event on button
+         * @description 
+         * get Table by id
+         * get Selected Items (multiSelect mode Table)
+         * get Selected Items Data.
+         */
+        onDeleteButtonPress: async function(oEvent) {
+            let sProductName = ""
+
+            const oTable = this.byId("idProductsTable")
+            const aSelectedItems = oTable.getSelectedItems()
+            const aSelectedItemsData = aSelectedItems.map(c => {
+                const oObject = c.getBindingContext("productsModel").getObject()
+                sProductName = oObject.name
+                return oObject
+            })
+            await this._openConfirmDeleteDialog(aSelectedItems.length, sProductName)
+        },
+
+        /**
+         * @private 
+         * @param {Integer} iCount length of selected items.
+         * @param {string} [sName] name of product item. optional parameter.
+         * @description open the delete dialog. Items from the table.
+         */
+        _openConfirmDeleteDialog: async function(iCount, sName) {
+            this._oDialog ??= await this.loadFragment({
+                name: "project1.view.fragments.ConfirmDelete"
+            })
+            
+            const oText = this.byId("idConfirmDeleteText")
+            if (iCount === 1 && sName) {
+                oText.setText(`Do you really want to delete product ${sName}?`)
+            } else {
+                oText.setText(`Do you really want to delete ${iCount} products?`)
+            }
+            this._oDialog.open()
+        },
+
+        /**
+         * @description close the dialog. when clicking No Button.
+         */
+        onNoButtonCloseDialogPress: function() {
+            this._oDialog.close()
         }
-    });
+    }); 
 });

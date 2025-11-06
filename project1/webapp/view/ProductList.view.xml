@@ -65,7 +65,7 @@
                                 <filterbar:FilterGroupItem 
                                  groupName="Group1"
                                  name="Suppliers"
-                                 label="Suppliers"
+                                 label="{i18n>filterSupplier}"
                                  visibleInFilterBar="true">
                                     <filterbar:control>
                                         <Input 
@@ -83,7 +83,8 @@
             </f:header>
                 
             <f:content>
-                <Table 
+                <Table
+                 id="idProductsTable"
                  items="{productsModel>/products}" 
                  mode="MultiSelect" 
                  selectionChange="onProductsTableSelectionChange">
@@ -91,6 +92,7 @@
                         <Toolbar>
                             <Button text="{i18n>buttonCreate}"></Button>
                             <Button 
+                             press="onDeleteButtonPress"
                              text="{i18n>buttonDelete}" 
                              enabled="{deleteButtonModel>/deleteEnabled}" 
                              type="Reject">

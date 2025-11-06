@@ -1,0 +1,24 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+>
+    <Dialog 
+     id="idConfirmDeleteDialog" 
+     state="Warning" 
+     title="{i18n>deleteDialogTitle}" 
+     contentWidth="400px"
+     contentHeight="40px">
+        <content>
+            <VBox alignItems="Center" justifyContent="Center" height="100%">
+                <Text id="idConfirmDeleteText"></Text>
+            </VBox>
+        </content>
+        <beginButton>
+            <Button text="{i18n>buttonYes}" type="Emphasized"></Button>
+        </beginButton>
+
+        <endButton>
+            <Button text="{i18n>buttonNo}" press="onNoButtonCloseDialogPress"></Button>
+        </endButton>
+    </Dialog>
+</c:FragmentDefinition>
