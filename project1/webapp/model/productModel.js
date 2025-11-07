@@ -58,8 +58,19 @@ sap.ui.define([
                     aSuppliers.push(supplier)
                 }
             })
- 
             return new JSONModel({suppliers: aSuppliers})
+        },
+
+        /**
+         * @param {object} oModel model of products.
+         * @param {Array} aID array of product id.
+         * @description filter products data with an id.
+         * @returns {Array} array of updeted products.
+         */
+        deleteProducts: function(oModel, aID) {
+            const aProducts = oModel.getProperty("/products")
+            const aUpdatedProducts = aProducts.filter(product => !aID.includes(product.id))
+            return aUpdatedProducts
         }
     }
 });

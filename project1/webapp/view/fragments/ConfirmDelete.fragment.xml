@@ -14,7 +14,10 @@
             </VBox>
         </content>
         <beginButton>
-            <Button text="{i18n>buttonYes}" type="Emphasized"></Button>
+            <Button 
+             text="{i18n>buttonYes}"
+             type="Emphasized"
+             press="onYesButtonConfirmDeletePress"></Button>
         </beginButton>
 
         <endButton>

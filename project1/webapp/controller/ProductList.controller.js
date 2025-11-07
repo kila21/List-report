@@ -51,30 +51,27 @@ sap.ui.define([
         onProductsTableSelectionChange: function(oEvent) {
             const oTable = oEvent.getSource()
             const iSelectedItems = oTable.getSelectedItems().length
-            if(iSelectedItems > 0) {
-                this.getModel("deleteButtonModel").setProperty("/deleteEnabled", true)
-            }else {
-                this.getModel("deleteButtonModel").setProperty("/deleteEnabled", false)
-            }
+
+            this.getModel("deleteButtonModel").setProperty(
+                "/deleteEnabled", 
+                iSelectedItems > 0 ? true : false
+            )
         },
 
         /**
          * @param {sap.ui.base.Event} oEvent press event on button
          * @description 
-         * get Table by id
-         * get Selected Items (multiSelect mode Table)
-         * get Selected Items Data.
          */
         onDeleteButtonPress: async function(oEvent) {
             let sProductName = ""
+            const aSelectedItems = this.getSelectedItemsFromTable()
 
-            const oTable = this.byId("idProductsTable")
-            const aSelectedItems = oTable.getSelectedItems()
-            const aSelectedItemsData = aSelectedItems.map(c => {
-                const oObject = c.getBindingContext("productsModel").getObject()
+            aSelectedItems.map(product => {
+                const oObject = product.getBindingContext("productsModel").getObject()
                 sProductName = oObject.name
                 return oObject
             })
+           
             await this._openConfirmDeleteDialog(aSelectedItems.length, sProductName)
         },
 
@@ -99,10 +96,49 @@ sap.ui.define([
         },
 
         /**
-         * @description close the dialog. when clicking No Button.
+         * @description Confirm Delete items press function.
+         * delete items with an id. inside productsModel.
          */
+        onYesButtonConfirmDeletePress: function() {
+            const aSelectedItems = this.getSelectedItemsFromTable()
+            const aID = aSelectedItems.map(
+                product => product.getBindingContext("productsModel").getObject().id
+            )
+            const oModel = this.getModel("productsModel")
+            const aUpdatedProducts = productModel.deleteProducts(oModel, aID)
+
+            if(aUpdatedProducts) {
+                oModel.setProperty("/products", aUpdatedProducts)
+                this.clearTableSelectedItems()
+                this.onNoButtonCloseDialogPress()
+            }
+        },
+
+        /**
+         * @private
+         * @returns {Array} Array of selectedItems.(LIstBase)
+         * @description get table by id.
+         * get Selected Items from table and return data.
+         */
+        getSelectedItemsFromTable: function() {
+            const oTable = this.byId("idProductsTable")
+            return oTable.getSelectedItems()  
+        },
+
+        /**
+         * @private
+         * @description removes Selections for table.
+         */
+        clearTableSelectedItems: function() {
+            const oTable = this.byId("idProductsTable")
+            oTable.removeSelections()
+        },
+
+        /**
+         * @description close the dialog. when clicking No Button.
+        */
         onNoButtonCloseDialogPress: function() {
             this._oDialog.close()
-        }
+        },
     }); 
 });
