@@ -1,10 +1,13 @@
 sap.ui.define([
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator"
 ], function(
-	JSONModel
+	JSONModel,
+    Filter,
+    FilterOperator
 ) {
 	"use strict";
-
 	return {
         /**
          * @returns {sap.ui.model.json.JSONModel}
@@ -71,6 +74,76 @@ sap.ui.define([
             const aProducts = oModel.getProperty("/products")
             const aUpdatedProducts = aProducts.filter(product => !aID.includes(product.id))
             return aUpdatedProducts
+        },
+
+        /**
+         * @param {string} sValue string of search query
+         * @returns {Array} Array of filter options.
+         * @description Search Filter, For product names.
+         */
+        onNameSearch: function(sValue) {
+            const aFilter = []
+            if (sValue) {
+                aFilter.push(new Filter("name", FilterOperator.Contains, sValue))
+            }
+            return aFilter
+        },
+
+        /**
+         * @param {Array} aKeys array of selected keys.
+         * @returns {object || null}
+         * @description check if keys are selected, if not return null.
+         * filter products with category id. and return new filter object for MultiComboBox.
+         */
+        onMultiComboBox: function(aKeys) {
+            // If no keys selected, don't create a filter
+            if (!aKeys || !Array.isArray(aKeys) || aKeys.length === 0) {
+                return null
+            }
+            // custom filter
+            const oFilter = new Filter({
+                path: "categories",
+                test: function(aCategories) {
+                    return aCategories.some(cat => aKeys.includes(cat.id))
+                }
+            })
+            return oFilter
+        },
+
+        /**
+         * @param {Date} startDate 
+         * @param {Date} dDate
+         * @returns {object || null} filter object or  null.
+         * @description get start and end date toISOString. and return new filter for DateRangeSelection.
+         */
+        onReleaseDate: function(startDate, endDate) {
+            if(startDate && endDate) {
+                const dStart = startDate.toISOString()
+                const dEnd = endDate.toISOString()
+                return new Filter({
+                    path: "releaseDate",
+                    operator: FilterOperator.BT,
+                    value1: dStart,
+                    value2: dEnd,
+                })
+            } else return null
+        },
+
+        /**
+         * @param {string} sValue value of input field.
+         * @returns {object || null} object of new filter
+         * @description create new custom filter object for suppliers and return it.
+         */
+        onSuppliersSearch: function(sValue) {
+            if (sValue) {
+                return new Filter({
+                    path: "suppliers",
+                    test: function(aSuppliers) {
+                        return aSuppliers.some(sup => sup.name.toLowerCase().includes(sValue.toLowerCase()))
+                    }
+                })
+            }
+            return null
         }
     }
 });

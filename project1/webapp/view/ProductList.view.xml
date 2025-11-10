@@ -9,7 +9,7 @@
             <f:header>
                 <f:DynamicPageHeader>
                     <f:content>
-                        <filterbar:FilterBar>
+                        <filterbar:FilterBar search="onFilterBarSearch">
                             <filterbar:filterGroupItems>
                                 <filterbar:FilterGroupItem 
                                  groupName="Group1"
@@ -17,7 +17,10 @@
                                  label="{i18n>filterName}"
                                  visibleInFilterBar="true">
                                     <filterbar:control>
-                                        <SearchField></SearchField>
+                                        <SearchField 
+                                         showSearchButton="false" 
+                                         value="{filtersModel>/search}">
+                                        </SearchField>
                                     </filterbar:control>
                                 </filterbar:FilterGroupItem>
 
@@ -27,7 +30,9 @@
                                  label="{i18n>filterCategory}"
                                  visibleInFilterBar="true">
                                     <filterbar:control>
-                                        <MultiComboBox items="{categoriesModel>/categories}">
+                                        <MultiComboBox
+                                         selectedKeys="{filtersModel>/multiComboBox}"
+                                         items="{categoriesModel>/categories}">
                                             <core:Item 
                                              key="{categoriesModel>id}"
                                              text="{categoriesModel>name}"/>
@@ -42,22 +47,9 @@
                                  visibleInFilterBar="true">
                                     <filterbar:control>
                                         <DateRangeSelection
-                                         value="{
-                                            type: 'sap.ui.model.type.DateInterval',
-                                            formatOptions: {
-                                                pattern: 'MM/yyyy'
-                                            },
-                                            parts: [
-                                                {
-                                                    type: 'sap.ui.model.type.Date',
-                                                    path: '/oDRS4Start'
-                                                },
-                                                {
-                                                    type: 'sap.ui.model.type.Date',
-                                                    path: '/oDRS4End'
-                                                }
-                                            ]
-                                         }">
+                                         dateValue="{filtersModel>/releaseDate/startDate}"
+                                         secondDateValue="{filtersModel>/releaseDate/endDate}"
+                                         valueFormat="yyyy-MM-dd">
                                         </DateRangeSelection>
                                     </filterbar:control>
                                 </filterbar:FilterGroupItem>
@@ -69,8 +61,10 @@
                                  visibleInFilterBar="true">
                                     <filterbar:control>
                                         <Input 
+                                         value="{filtersModel>/suppliers}"
                                          showSuggestion="true"
-                                         suggestionItems="{suppliersModel>/suppliers}">
+                                         suggestionItems="{suppliersModel>/suppliers}"
+                                         showClearIcon="true">
                                             <core:ListItem
                                                 text="{suppliersModel>name}"/>
                                         </Input>

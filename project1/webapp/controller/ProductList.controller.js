@@ -3,13 +3,13 @@ sap.ui.define([
     "project1/model/productModel",
     "project1/model/formatter",
 	"sap/ui/model/json/JSONModel",
-    "sap/ui/core/Fragment"
+    "sap/ui/core/Fragment",
 ], (
     BaseController,
 	productModel,
 	formatter,
 	JSONModel,
-	Fragment
+	Fragment,
 ) => {
     "use strict";
 
@@ -22,6 +22,7 @@ sap.ui.define([
          * set productsModal to the view.
          * when request is Completed set categories and Suppliers Model.(filter options)
          * set model for delete button.(Enabled or not)
+         * set model for filter options.
          */
         onInit() {
             // products model
@@ -38,10 +39,67 @@ sap.ui.define([
             })
 
             // for delete button on the view. default is false.
-            const oModel = new JSONModel({
+            const oButtonModel = new JSONModel({
                 deleteEnabled: false
             })
-            this.setModel(oModel, "deleteButtonModel")
+            this.setModel(oButtonModel, "deleteButtonModel")
+
+            // for filter options.
+            const oFiltersModel = new JSONModel({
+                search: '',
+                multiComboBox: [],
+                releaseDate: {
+                    startDate: null,
+                    endDate: null
+                },
+                suppliers: '',
+            })
+            this.setModel(oFiltersModel, "filtersModel")
+        },
+
+        /**
+         * @returns {void}
+         * @description get table by id, get binding and get filters model
+         * create array of all filters together and bind it into items.
+         */
+        onFilterBarSearch: function() {
+            const oTable = this.byId("idProductsTable")
+            const oBinding = oTable.getBinding("items")
+
+            const oFiltersModel = this.getModel("filtersModel")
+
+            const aFilters = []
+
+            // name---search input
+            const sSearchValue = oFiltersModel.getProperty("/search")
+            const aSearchFilter = productModel.onNameSearch(sSearchValue)
+            if (aSearchFilter.length > 0) {
+                aFilters.push(...aSearchFilter)
+            }
+
+            // category---multiComboBox
+            const aSelectedKeys = oFiltersModel.getProperty("/multiComboBox")
+            const oCategoriesFilter = productModel.onMultiComboBox(aSelectedKeys)
+            if (oCategoriesFilter) {
+                aFilters.push(oCategoriesFilter)
+            }
+
+            // releaseDate---Date-picker
+            const oReleaseDate = oFiltersModel.getProperty("/releaseDate")
+            const oDateFilter = productModel.onReleaseDate(oReleaseDate.startDate, oReleaseDate.endDate)
+            if (oDateFilter) {
+                aFilters.push(oDate)
+            }
+
+            // suppliers---input with suggestions.
+            const sSuppliersValue = oFiltersModel.getProperty("/suppliers")
+            const oSuppliersFilter = productModel.onSuppliersSearch(sSuppliersValue)
+            if(oSuppliersFilter) {
+                aFilters.push(oSuppliersFilter)
+            }
+
+            // add filters
+            oBinding.filter(aFilters)
         },
 
         /**
@@ -71,7 +129,6 @@ sap.ui.define([
                 sProductName = oObject.name
                 return oObject
             })
-           
             await this._openConfirmDeleteDialog(aSelectedItems.length, sProductName)
         },
 
