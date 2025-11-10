@@ -125,8 +125,7 @@
                         }">
                         <Text text="{productsModel>name}"></Text>
                         <Text text="{productsModel>description}"></Text>
-                        <!-- <Text text="{productsModel>releaseDate}"></Text> -->
-                        <Text text="{
+                                <Text text="{
                             path: 'productsModel>releaseDate',
                             type: 'sap.ui.model.type.Date',
                             formatOptions: {
