@@ -1,68 +1,154 @@
-<mvc:View controllerName="project1.controller.ProductList"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
+<mvc:View xmlns:core="sap.ui.core" 
+ controllerName="project1.controller.ProductList"
+ xmlns:mvc="sap.ui.core.mvc"
+ xmlns="sap.m"
+ xmlns:f="sap.f"
+ xmlns:filterbar="sap.ui.comp.filterbar">
     <Page id="idProductListPage" title="{i18n>productListTitle}">
-        <Table 
-        items="{productsModel>/products}" 
-        mode="MultiSelect" 
-        selectionChange="onProductsTableSelectionChange">
-            <headerToolbar>
-                <Toolbar >
-                    <Button text="Create"></Button>
-                    <Button enabled="{deleteButtonModel>/deleteEnabled}" text="Delete" type="Reject"></Button>
-                </Toolbar>
-            </headerToolbar>
-            <columns>
-                <Column>
-                    <Text text="name"></Text>
-                </Column>
+        <f:DynamicPage>
+            <f:header>
+                <f:DynamicPageHeader>
+                    <f:content>
+                        <filterbar:FilterBar
+                         search="onFilterBarSearch"
+                         showClearOnFB="true"
+                         clear="onFilterBarClear">
+                            <filterbar:filterGroupItems >
+                                <filterbar:FilterGroupItem 
+                                 groupName="Group1"
+                                 name="Name"
+                                 label="{i18n>filterName}"
+                                 visibleInFilterBar="true">
+                                    <filterbar:control>
+                                        <SearchField 
+                                         showSearchButton="false" 
+                                         value="{filtersModel>/search}">
+                                        </SearchField>
+                                    </filterbar:control>
+                                </filterbar:FilterGroupItem>
 
-                <Column>
-                    <Text text="description"></Text>
-                </Column>
+                                <filterbar:FilterGroupItem 
+                                 groupName="Group1"
+                                 name="Category"
+                                 label="{i18n>filterCategory}"
+                                 visibleInFilterBar="true">
+                                    <filterbar:control>
+                                        <MultiComboBox
+                                         selectedKeys="{filtersModel>/multiComboBox}"
+                                         items="{categoriesModel>/categories}">
+                                            <core:Item 
+                                             key="{categoriesModel>id}"
+                                             text="{categoriesModel>name}"/>
+                                        </MultiComboBox>
+                                    </filterbar:control>
+                                </filterbar:FilterGroupItem>
 
-                <Column>
-                    <Text text="releaseDate"></Text>
-                </Column>
+                                <filterbar:FilterGroupItem 
+                                 groupName="Group1"
+                                 name="Date"
+                                 label="{i18n>filterDate}"
+                                 visibleInFilterBar="true">
+                                    <filterbar:control>
+                                        <DateRangeSelection
+                                         dateValue="{filtersModel>/releaseDate/startDate}"
+                                         secondDateValue="{filtersModel>/releaseDate/endDate}"
+                                         valueFormat="yyyy-MM-dd">
+                                        </DateRangeSelection>
+                                    </filterbar:control>
+                                </filterbar:FilterGroupItem>
+                                
+                                <filterbar:FilterGroupItem 
+                                 groupName="Group1"
+                                 name="Suppliers"
+                                 label="{i18n>filterSupplier}"
+                                 visibleInFilterBar="true">
+                                    <filterbar:control>
+                                        <Input 
+                                         value="{filtersModel>/suppliers}"
+                                         showSuggestion="true"
+                                         suggestionItems="{suppliersModel>/suppliers}"
+                                         showClearIcon="true">
+                                            <core:ListItem
+                                                text="{suppliersModel>name}"/>
+                                        </Input>
+                                    </filterbar:control>
+                                </filterbar:FilterGroupItem>
+                            </filterbar:filterGroupItems>
+                        </filterbar:FilterBar>
+                    </f:content>
+                </f:DynamicPageHeader>
+            </f:header>
+                
+            <f:content>
+                <Table
+                 id="idProductsTable"
+                 items="{productsModel>/products}" 
+                 mode="MultiSelect" 
+                 selectionChange="onProductsTableSelectionChange">
+                    <headerToolbar>
+                        <Toolbar>
+                            <Button text="{i18n>buttonCreate}"></Button>
+                            <Button 
+                             press="onDeleteButtonPress"
+                             text="{i18n>buttonDelete}" 
+                             enabled="{deleteButtonModel>/deleteEnabled}" 
+                             type="Reject">
+                            </Button>
+                        </Toolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column>
+                            <Text text="{i18n>tableName}"></Text>
+                        </Column>
 
-                <Column>
-                    <Text text="price"></Text>
-                </Column>
+                        <Column>
+                            <Text text="{i18n>tableDescription}"></Text>
+                        </Column>
 
-                <Column>
-                    <Text text="rating"></Text>
-                </Column>
-            </columns>
+                        <Column>
+                            <Text text="{i18n>tableReleaseDate}"></Text>
+                        </Column>
 
-            <ColumnListItem
-                highlight="{
-                    path: 'productsModel>discountDate',
-                    formatter: '.formatter.highlightRow'
-                }">
-                <Text text="{productsModel>name}"></Text>
-                <Text text="{productsModel>description}"></Text>
-                <Text text="{
-                    path: 'productsModel>releaseDate',
-                    type: 'sap.ui.model.type.Date',
-                    formatOptions: {
-                        style: 'medium',
-                        source: {
-                            pattern: 'yyyy-MM-dd'
-                        }
-                    }
-                }">
-                </Text>
-                <ObjectNumber 
-                    number="{productsModel>price}"
-                    unit="$"
-                    state="Success">
-                </ObjectNumber>
-                <RatingIndicator 
-                    value="{productsModel>rating}" 
-                    iconSize="14px"
-                    editable="false">
-                </RatingIndicator>
-            </ColumnListItem>
-        </Table>
+                        <Column>
+                            <Text text="{i18n>tablePrice}"></Text>
+                        </Column>
+
+                        <Column>
+                            <Text text="{i18n>tableRating}"></Text>
+                        </Column>
+                    </columns>
+
+                    <ColumnListItem
+                        highlight="{
+                            path: 'productsModel>discountDate',
+                            formatter: '.formatter.highlightRow'
+                        }">
+                        <Text text="{productsModel>name}"></Text>
+                        <Text text="{productsModel>description}"></Text>
+                                <Text text="{
+                            path: 'productsModel>releaseDate',
+                            type: 'sap.ui.model.type.Date',
+                            formatOptions: {
+                                style: 'medium',
+                                source: {
+                                    pattern: 'yyyy-MM-dd'
+                                }
+                            }
+                        }">
+                        </Text>
+                        <ObjectNumber 
+                            number="{productsModel>price}"
+                            unit="$"
+                            state="Success">
+                        </ObjectNumber>
+                        <RatingIndicator 
+                            value="{productsModel>rating}" 
+                            iconSize="14px"
+                            editable="false">
+                        </RatingIndicator>
+                    </ColumnListItem>
+                </Table>
+            </f:content>
+        </f:DynamicPage>
     </Page>
 </mvc:View>
