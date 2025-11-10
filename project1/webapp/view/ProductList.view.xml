@@ -1,7 +1,68 @@
 <mvc:View controllerName="project1.controller.ProductList"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
-    <Page id="productList" title="{i18n>productListTitle}">
-        <Button id="listButton" text="test"></Button>
+    <Page id="idProductListPage" title="{i18n>productListTitle}">
+        <Table 
+        items="{productsModel>/products}" 
+        mode="MultiSelect" 
+        selectionChange="onProductsTableSelectionChange">
+            <headerToolbar>
+                <Toolbar >
+                    <Button text="Create"></Button>
+                    <Button enabled="{deleteButtonModel>/deleteEnabled}" text="Delete" type="Reject"></Button>
+                </Toolbar>
+            </headerToolbar>
+            <columns>
+                <Column>
+                    <Text text="name"></Text>
+                </Column>
+
+                <Column>
+                    <Text text="description"></Text>
+                </Column>
+
+                <Column>
+                    <Text text="releaseDate"></Text>
+                </Column>
+
+                <Column>
+                    <Text text="price"></Text>
+                </Column>
+
+                <Column>
+                    <Text text="rating"></Text>
+                </Column>
+            </columns>
+
+            <ColumnListItem
+                highlight="{
+                    path: 'productsModel>discountDate',
+                    formatter: '.formatter.highlightRow'
+                }">
+                <Text text="{productsModel>name}"></Text>
+                <Text text="{productsModel>description}"></Text>
+                <Text text="{
+                    path: 'productsModel>releaseDate',
+                    type: 'sap.ui.model.type.Date',
+                    formatOptions: {
+                        style: 'medium',
+                        source: {
+                            pattern: 'yyyy-MM-dd'
+                        }
+                    }
+                }">
+                </Text>
+                <ObjectNumber 
+                    number="{productsModel>price}"
+                    unit="$"
+                    state="Success">
+                </ObjectNumber>
+                <RatingIndicator 
+                    value="{productsModel>rating}" 
+                    iconSize="14px"
+                    editable="false">
+                </RatingIndicator>
+            </ColumnListItem>
+        </Table>
     </Page>
 </mvc:View>
