@@ -30,11 +30,7 @@ sap.ui.define([
             const oTable = oEvent.getSource()
             const iSelectedItems = oTable.getSelectedItems().length
             
-            if(iSelectedItems > 0) {
-                this.getModel("deleteButtonModel").setProperty('/deleteEnabled', true)
-            }else {
-                this.getModel("deleteButtonModel").setProperty('/deleteEnabled', false)
-            }
+            this.getModel("deleteButtonModel").setProperty('/deleteEnabled', !!iSelectedItems)
         }
     });
 });
