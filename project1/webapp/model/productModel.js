@@ -1,11 +1,13 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
+    "sap/ui/model/FilterOperator",
+    "sap/ui/model/Sorter"
 ], function(
 	JSONModel,
     Filter,
-    FilterOperator
+    FilterOperator,
+    Sorter
 ) {
 	"use strict";
 	return {
@@ -130,7 +132,7 @@ sap.ui.define([
         },
 
         /**
-         * @param {string} sValue value of input field.
+         * @param {string} sValue value of input field with suggestion.
          * @returns {object || null} object of new filter
          * @description create new custom filter object for suppliers and return it.
          */
@@ -144,6 +146,16 @@ sap.ui.define([
                 })
             }
             return null
+        },
+
+        /**
+         * @param {string} sProperty value of sort property
+         * @param {boolean} bDescending
+         * @returns {sap.ui.model.Sorter}
+         * @description create sort operation depending on property and descending value.
+         */
+        onSort: function(sProperty, bDescending) {
+            return new Sorter(sProperty, bDescending)
         }
     }
 });

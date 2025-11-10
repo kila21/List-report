@@ -98,23 +98,88 @@
                     </headerToolbar>
                     <columns>
                         <Column>
-                            <Text text="{i18n>tableName}"></Text>
+                            <HBox alignItems="Center">
+                                <Text text="{i18n>tableName}"></Text>
+                                <Button 
+                                 class="sapUiSmallMarginBegin"
+                                 icon="sap-icon://sort"
+                                 press="onButtonSortPress">
+                                    <customData>
+                                        <core:CustomData
+                                         key="sortProperty"
+                                         value="name"
+                                         writeToDom="true"/>
+                                    </customData>
+                                </Button>
+                            </HBox>
                         </Column>
 
                         <Column>
-                            <Text text="{i18n>tableDescription}"></Text>
+                            <HBox alignItems="Center">
+                                <Text text="{i18n>tableDescription}"></Text>
+                                <Button 
+                                class="sapUiSmallMarginBegin"
+                                icon="sap-icon://sort"
+                                press="onButtonSortPress">
+                                    <customData>
+                                        <core:CustomData
+                                        key="sortProperty"
+                                        value="description"
+                                        writeToDom="true"/>
+                                    </customData>
+                                </Button>
+                            </HBox>
                         </Column>
 
                         <Column>
-                            <Text text="{i18n>tableReleaseDate}"></Text>
+                            <HBox alignItems="Center">
+                                <Text text="{i18n>tableReleaseDate}"></Text>
+                                <Button 
+                                class="sapUiSmallMarginBegin"
+                                icon="sap-icon://sort"
+                                press="onButtonSortPress">
+                                    <customData>
+                                        <core:CustomData
+                                        key="sortProperty"
+                                        value="releaseDate"
+                                        writeToDom="true"/>
+                                    </customData>
+                                </Button>
+                            </HBox>
                         </Column>
 
                         <Column>
-                            <Text text="{i18n>tablePrice}"></Text>
+                            <HBox alignItems="Center">
+                                <Text text="{i18n>tablePrice}"></Text>
+                                <Button 
+                                class="sapUiSmallMarginBegin"
+                                icon="sap-icon://sort"
+                                press="onButtonSortPress">
+                                    <customData>
+                                        <core:CustomData
+                                        key="sortProperty"
+                                        value="price"
+                                        writeToDom="true"/>
+                                    </customData>
+                                </Button>
+                            </HBox>
                         </Column>
 
                         <Column>
-                            <Text text="{i18n>tableRating}"></Text>
+                            <HBox alignItems="Center">
+                                <Text text="{i18n>tableRating}"></Text>
+                                <Button 
+                                class="sapUiSmallMarginBegin"
+                                icon="sap-icon://sort"
+                                press="onButtonSortPress">
+                                    <customData>
+                                        <core:CustomData
+                                        key="sortProperty"
+                                        value="price"
+                                        writeToDom="true"/>
+                                    </customData>
+                                </Button>
+                            </HBox>
                         </Column>
                     </columns>
 

@@ -1,11 +1,13 @@
 sap.ui.define([
     "project1/controller/BaseController",
+    "project1/model/constants",
     "project1/model/productModel",
     "project1/model/formatter",
 	"sap/ui/model/json/JSONModel",
-    "sap/ui/core/Fragment",
+    "sap/ui/core/Fragment"
 ], (
     BaseController,
+	constants,
 	productModel,
 	formatter,
 	JSONModel,
@@ -122,6 +124,40 @@ sap.ui.define([
         },
 
         /**
+         * @param {Event} oEvent press event on sort icon
+         * @description change icon of button. (default, ascending, descending)
+         *              use sort method, to sort table.
+         */
+        onButtonSortPress: function(oEvent) {
+            const oButton = oEvent.getSource()
+            const sProperty = oButton.getCustomData()[0].getValue()
+            const sCurrentIcon = oButton.getIcon()
+
+            const oIconsObject = constants.SortIcons
+            
+            let sNewIcon = ""
+            let aSorted = []
+
+            if (sCurrentIcon === oIconsObject.default) {
+                sNewIcon = oIconsObject.asc
+                aSorted = productModel.onSort(sProperty, false)
+            } else if (sCurrentIcon === oIconsObject.asc) {
+                sNewIcon = oIconsObject.desc
+                aSorted = productModel.onSort(sProperty, true)
+            } else if (sCurrentIcon === oIconsObject.desc) {
+                sNewIcon = oIconsObject.default
+                aSorted = null
+            }
+
+            // reset button sort icons.
+            this._resetSortIcon(oButton)
+
+            oButton.setIcon(sNewIcon)
+            const oBinding = this.byId("idProductsTable").getBinding("items")
+            oBinding.sort(aSorted)
+        },
+
+        /**
          * @param {Event} oEvent 
          * @description check if selected items are and set property of delete button.
          */
@@ -226,5 +262,22 @@ sap.ui.define([
         onNoButtonCloseDialogPress: function() {
             this._oDialog.close()
         },
+
+        /**
+         * @private
+         * @param {object} oButton button press event, triggered on sort icon click. 
+         * @description reset all button icon to the default.
+         */
+        _resetSortIcon: function(oButton) {
+            const oTable = this.byId("idProductsTable")
+
+            oTable.getColumns().forEach((el, i) => {
+                const oBtn = el.getHeader().getItems()[1]
+                if(oButton && oBtn === oButton) {
+                    return
+                }
+                oBtn.setIcon(constants.SortIcons.default)
+            })
+        }
     }); 
 });
