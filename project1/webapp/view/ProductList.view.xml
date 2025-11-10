@@ -9,8 +9,11 @@
             <f:header>
                 <f:DynamicPageHeader>
                     <f:content>
-                        <filterbar:FilterBar search="onFilterBarSearch">
-                            <filterbar:filterGroupItems>
+                        <filterbar:FilterBar
+                         search="onFilterBarSearch"
+                         showClearOnFB="true"
+                         clear="onFilterBarClear">
+                            <filterbar:filterGroupItems >
                                 <filterbar:FilterGroupItem 
                                  groupName="Group1"
                                  name="Name"

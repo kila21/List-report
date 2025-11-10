@@ -18,11 +18,10 @@ sap.ui.define([
         _oDialog: null,
         /**
          * @override
-         * @description
-         * set productsModal to the view.
-         * when request is Completed set categories and Suppliers Model.(filter options)
-         * set model for delete button.(Enabled or not)
-         * set model for filter options.
+         * @description set productsModal to the view.
+         *              when request is Completed set categories and Suppliers Model.(filter options)
+         *              set model for delete button.(Enabled or not)
+         *              set model for filter options.
          */
         onInit() {
             // products model
@@ -60,7 +59,7 @@ sap.ui.define([
         /**
          * @returns {void}
          * @description get table by id, get binding and get filters model
-         * create array of all filters together and bind it into items.
+         *              create array of all filters together and bind it into items.
          */
         onFilterBarSearch: function() {
             const oTable = this.byId("idProductsTable")
@@ -88,7 +87,7 @@ sap.ui.define([
             const oReleaseDate = oFiltersModel.getProperty("/releaseDate")
             const oDateFilter = productModel.onReleaseDate(oReleaseDate.startDate, oReleaseDate.endDate)
             if (oDateFilter) {
-                aFilters.push(oDate)
+                aFilters.push(oDateFilter)
             }
 
             // suppliers---input with suggestions.
@@ -101,6 +100,30 @@ sap.ui.define([
             // add filters
             oBinding.filter(aFilters)
         },
+        
+        /**
+         * @description create new init model JSON and set it inot filtersModel.
+         *              call onFilterBarSearch method to bind no filters.
+         */
+        onFilterBarClear: function() {
+            // clear selections of table.
+            this._clearTableSelectedItems()
+            this._deleteButtonEnable(false)
+
+            // init model for filters
+            const oInitFilterModel = new JSONModel({
+                search: '',
+                multiComboBox: [],
+                releaseDate: {
+                    startDate: null,
+                    endDate: null
+                },
+                suppliers: '',
+            })
+
+            this.setModel(oInitFilterModel, "filtersModel")
+            this.onFilterBarSearch()
+        },
 
         /**
          * @param {Event} oEvent 
@@ -110,19 +133,17 @@ sap.ui.define([
             const oTable = oEvent.getSource()
             const iSelectedItems = oTable.getSelectedItems().length
 
-            this.getModel("deleteButtonModel").setProperty(
-                "/deleteEnabled", 
-                iSelectedItems > 0 ? true : false
-            )
+            this._deleteButtonEnable(!!iSelectedItems)
         },
 
         /**
          * @param {sap.ui.base.Event} oEvent press event on button
-         * @description 
+         * @description map through the selectedItems on table and get Context,
+         *              call confirm delete.
          */
         onDeleteButtonPress: async function(oEvent) {
             let sProductName = ""
-            const aSelectedItems = this.getSelectedItemsFromTable()
+            const aSelectedItems = this._getSelectedItemsFromTable()
 
             aSelectedItems.map(product => {
                 const oObject = product.getBindingContext("productsModel").getObject()
@@ -153,11 +174,12 @@ sap.ui.define([
         },
 
         /**
-         * @description Confirm Delete items press function.
-         * delete items with an id. inside productsModel.
+         * @description Confirm that user wants to delete items.
+         *              delete items with an id. inside productsModel.
+         *              clear Table checkmarks and close dialog.
          */
         onYesButtonConfirmDeletePress: function() {
-            const aSelectedItems = this.getSelectedItemsFromTable()
+            const aSelectedItems = this._getSelectedItemsFromTable()
             const aID = aSelectedItems.map(
                 product => product.getBindingContext("productsModel").getObject().id
             )
@@ -166,18 +188,29 @@ sap.ui.define([
 
             if(aUpdatedProducts) {
                 oModel.setProperty("/products", aUpdatedProducts)
-                this.clearTableSelectedItems()
+                this._clearTableSelectedItems()
+                this._deleteButtonEnable(false)
                 this.onNoButtonCloseDialogPress()
             }
         },
 
         /**
          * @private
+         * @param {boolean} bEnable true if button is enable, false if not.
+         * @description change state of button of delete 
+         */
+        _deleteButtonEnable: function(bEnable) {
+            this.getModel("deleteButtonModel").setProperty(
+                "/deleteEnabled", bEnable)
+        },
+
+        /**
+         * @private
          * @returns {Array} Array of selectedItems.(LIstBase)
          * @description get table by id.
-         * get Selected Items from table and return data.
+         *              get Selected Items from table and return data.
          */
-        getSelectedItemsFromTable: function() {
+        _getSelectedItemsFromTable: function() {
             const oTable = this.byId("idProductsTable")
             return oTable.getSelectedItems()  
         },
@@ -186,7 +219,7 @@ sap.ui.define([
          * @private
          * @description removes Selections for table.
          */
-        clearTableSelectedItems: function() {
+        _clearTableSelectedItems: function() {
             const oTable = this.byId("idProductsTable")
             oTable.removeSelections()
         },
