@@ -106,10 +106,6 @@ sap.ui.define([
          *              call onFilterBarSearch method to bind no filters.
          */
         onFilterBarClear: function() {
-            // clear selections of table.
-            this._clearTableSelectedItems()
-            this._deleteButtonEnable(false)
-
             // init model for filters
             const oInitFilterModel = new JSONModel({
                 search: '',
@@ -188,6 +184,7 @@ sap.ui.define([
 
             if(aUpdatedProducts) {
                 oModel.setProperty("/products", aUpdatedProducts)
+                
                 this._clearTableSelectedItems()
                 this._deleteButtonEnable(false)
                 this.onNoButtonCloseDialogPress()
@@ -200,8 +197,7 @@ sap.ui.define([
          * @description change state of button of delete 
          */
         _deleteButtonEnable: function(bEnable) {
-            this.getModel("deleteButtonModel").setProperty(
-                "/deleteEnabled", bEnable)
+            this.getModel("deleteButtonModel").setProperty("/deleteEnabled", bEnable)
         },
 
         /**
@@ -221,7 +217,7 @@ sap.ui.define([
          */
         _clearTableSelectedItems: function() {
             const oTable = this.byId("idProductsTable")
-            oTable.removeSelections()
+            oTable.removeSelections(true)
         },
 
         /**
