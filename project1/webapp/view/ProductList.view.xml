@@ -215,5 +215,16 @@
                 </Table>
             </f:content>
         </f:DynamicPage>
+
+        <MessagePopover id="idConfirmationMessagePopover">
+            <headerButton>
+                <Button icon="sap-icon://close"></Button>
+            </headerButton>
+            <items>
+                <MessageItem id="idMessageItem" title="{i18n>deleteDialogTitle}" type="Warning">
+                    <Link text="{i18n>buttonYes}" emphasized="true" press="onLinkDeletionPress"></Link>
+                </MessageItem>
+            </items>
+        </MessagePopover>
     </Page>
 </mvc:View>

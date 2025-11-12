@@ -3,34 +3,31 @@ sap.ui.define([
     "project1/model/constants",
     "project1/model/productModel",
     "project1/model/formatter",
-	"sap/ui/model/json/JSONModel",
-    "sap/ui/core/Fragment"
+	"sap/ui/model/json/JSONModel"
 ], (
     BaseController,
 	constants,
 	productModel,
 	formatter,
-	JSONModel,
-	Fragment,
+	JSONModel
 ) => {
     "use strict";
 
     return BaseController.extend("project1.controller.ProductList", {
         formatter: formatter,
         _oDialog: null,
+
         /**
+         * set productsModal to the view.
+         * when request is Completed set categories and Suppliers Model.(filter options)
+         * set model for delete button.(Enabled or not)
+         * set model for filter options.
          * @override
-         * @description set productsModal to the view.
-         *              when request is Completed set categories and Suppliers Model.(filter options)
-         *              set model for delete button.(Enabled or not)
-         *              set model for filter options.
          */
         onInit() {
-            // products model
             const oProductsModel = productModel.createProductModel()
             this.setModel(oProductsModel, "productsModel")
 
-            // attach Event Once to set new model for categories from Data.json file.
             oProductsModel.attachEventOnce("requestCompleted", () => {
                 const oCategories = productModel.getAllCategory(oProductsModel)
                 this.setModel(oCategories, "categoriesModel")
@@ -39,13 +36,11 @@ sap.ui.define([
                 this.setModel(oSuppliers, "suppliersModel")
             })
 
-            // for delete button on the view. default is false.
-            const oButtonModel = new JSONModel({
+            const oDeleteButtonModel = new JSONModel({
                 deleteEnabled: false
             })
-            this.setModel(oButtonModel, "deleteButtonModel")
+            this.setModel(oDeleteButtonModel, "deleteButtonModel")
 
-            // for filter options.
             const oFiltersModel = new JSONModel({
                 search: '',
                 multiComboBox: [],
@@ -59,56 +54,54 @@ sap.ui.define([
         },
 
         /**
+         * Filter functionality for filterbar options.Contains below filters: 
+         * Search Filter for name.
+         * Category Filter with Check marks (MultiComboBox).
+         * Release Date Filter, with DateRangeSelection.
+         * Suppliers Filter, Search with suggestions.
+         * Finally bind it to the items.
          * @returns {void}
-         * @description get table by id, get binding and get filters model
-         *              create array of all filters together and bind it into items.
          */
         onFilterBarSearch: function() {
             const oTable = this.byId("idProductsTable")
             const oBinding = oTable.getBinding("items")
-
             const oFiltersModel = this.getModel("filtersModel")
 
             const aFilters = []
 
-            // name---search input
             const sSearchValue = oFiltersModel.getProperty("/search")
             const aSearchFilter = productModel.onNameSearch(sSearchValue)
             if (aSearchFilter.length > 0) {
                 aFilters.push(...aSearchFilter)
             }
 
-            // category---multiComboBox
             const aSelectedKeys = oFiltersModel.getProperty("/multiComboBox")
             const oCategoriesFilter = productModel.onMultiComboBox(aSelectedKeys)
             if (oCategoriesFilter) {
                 aFilters.push(oCategoriesFilter)
             }
 
-            // releaseDate---Date-picker
             const oReleaseDate = oFiltersModel.getProperty("/releaseDate")
             const oDateFilter = productModel.onReleaseDate(oReleaseDate.startDate, oReleaseDate.endDate)
             if (oDateFilter) {
                 aFilters.push(oDateFilter)
             }
 
-            // suppliers---input with suggestions.
             const sSuppliersValue = oFiltersModel.getProperty("/suppliers")
             const oSuppliersFilter = productModel.onSuppliersSearch(sSuppliersValue)
             if(oSuppliersFilter) {
                 aFilters.push(oSuppliersFilter)
             }
 
-            // add filters
             oBinding.filter(aFilters)
         },
         
         /**
-         * @description create new init model JSON and set it inot filtersModel.
-         *              call onFilterBarSearch method to bind no filters.
+         * Create Init object. And set it to the filtersModel.
+         * And Call onFilterBarSearch, to update binding.
+         * @returns {void}
          */
         onFilterBarClear: function() {
-            // init model for filters
             const oInitFilterModel = new JSONModel({
                 search: '',
                 multiComboBox: [],
@@ -124,10 +117,10 @@ sap.ui.define([
         },
 
         /**
-         * @param {Event} oEvent press event on sort icon
-         * @description change icon of button. (default, ascending, descending)
-         *              use sort method, to sort table.
-         */
+         * Click on the Sort button on the table calls the function. 
+         * Which will handle: Icon change and sorting.
+         * @param {sap.ui.base.Event} oEvent
+        */
         onButtonSortPress: function(oEvent) {
             const oButton = oEvent.getSource()
             const sProperty = oButton.getCustomData()[0].getValue()
@@ -149,7 +142,6 @@ sap.ui.define([
                 aSorted = null
             }
 
-            // reset button sort icons.
             this._resetSortIcon(oButton)
 
             oButton.setIcon(sNewIcon)
@@ -158,62 +150,63 @@ sap.ui.define([
         },
 
         /**
-         * @param {Event} oEvent 
-         * @description check if selected items are and set property of delete button.
+         * It's Table SelectionChange event. Which finds out if there is selected items and depend on that enables button.
+         * @param {sap.ui.base.Event} oEvent
          */
         onProductsTableSelectionChange: function(oEvent) {
             const oTable = oEvent.getSource()
             const iSelectedItems = oTable.getSelectedItems().length
 
-            this._deleteButtonEnable(!!iSelectedItems)
+            this._setDeleteButtonEnable(!!iSelectedItems)
         },
 
         /**
+         * Finds out If there is selected items in table and call function to ask user about delete.
          * @param {sap.ui.base.Event} oEvent press event on button
-         * @description map through the selectedItems on table and get Context,
-         *              call confirm delete.
          */
         onDeleteButtonPress: async function(oEvent) {
             let sProductName = ""
             const aSelectedItems = this._getSelectedItemsFromTable()
 
-            aSelectedItems.map(product => {
-                const oObject = product.getBindingContext("productsModel").getObject()
+            aSelectedItems.map(oProduct => {
+                const oObject = oProduct.getBindingContext("productsModel").getObject()
                 sProductName = oObject.name
                 return oObject
             })
-            await this._openConfirmDeleteDialog(aSelectedItems.length, sProductName)
+            await this._openConfirmDeleteDialog(aSelectedItems.length, oEvent.getSource(), sProductName)
         },
 
         /**
+         * This function set the Description depending on the arguments and opens the dialog.
          * @private 
          * @param {Integer} iCount length of selected items.
+         * @param {sap.m.Button} oButton
          * @param {string} [sName] name of product item. optional parameter.
-         * @description open the delete dialog. Items from the table.
          */
-        _openConfirmDeleteDialog: async function(iCount, sName) {
-            this._oDialog ??= await this.loadFragment({
-                name: "project1.view.fragments.ConfirmDelete"
-            })
+        _openConfirmDeleteDialog: async function(iCount, oButton, sName) {
+            const oMessagePopover = this.byId("idConfirmationMessagePopover")
+            const oMessageItem = this.byId("idMessageItem")
+            let sDescription = ''
+
             
-            const oText = this.byId("idConfirmDeleteText")
             if (iCount === 1 && sName) {
-                oText.setText(`Do you really want to delete product ${sName}?`)
+                sDescription = `Do you really want to delete product ${sName}?`
             } else {
-                oText.setText(`Do you really want to delete ${iCount} products?`)
+                sDescription = `Do you really want to delete ${iCount} products?`
             }
-            this._oDialog.open()
+            oMessageItem.setDescription(sDescription)
+            oMessagePopover.openBy(oButton)
+         
         },
 
         /**
-         * @description Confirm that user wants to delete items.
-         *              delete items with an id. inside productsModel.
-         *              clear Table checkmarks and close dialog.
+         * Delete the item and clear the UI.
+         * @returns {void}
          */
-        onYesButtonConfirmDeletePress: function() {
+        onLinkDeletionPress: function() {
             const aSelectedItems = this._getSelectedItemsFromTable()
             const aID = aSelectedItems.map(
-                product => product.getBindingContext("productsModel").getObject().id
+                oProduct => oProduct.getBindingContext("productsModel").getObject().id
             )
             const oModel = this.getModel("productsModel")
             const aUpdatedProducts = productModel.deleteProducts(oModel, aID)
@@ -222,25 +215,24 @@ sap.ui.define([
                 oModel.setProperty("/products", aUpdatedProducts)
                 
                 this._clearTableSelectedItems()
-                this._deleteButtonEnable(false)
-                this.onNoButtonCloseDialogPress()
+                this._setDeleteButtonEnable(false)
+                this._onButtonClosePress()
             }
         },
 
         /**
+         * Changes the state of button Delete
          * @private
          * @param {boolean} bEnable true if button is enable, false if not.
-         * @description change state of button of delete 
          */
-        _deleteButtonEnable: function(bEnable) {
+        _setDeleteButtonEnable: function(bEnable) {
             this.getModel("deleteButtonModel").setProperty("/deleteEnabled", bEnable)
         },
 
         /**
+         * Get Selected Items from the table and return It.
          * @private
-         * @returns {Array} Array of selectedItems.(LIstBase)
-         * @description get table by id.
-         *              get Selected Items from table and return data.
+         * @returns {sap.m.ColumnListItem[]} Array of selected items from the table
          */
         _getSelectedItemsFromTable: function() {
             const oTable = this.byId("idProductsTable")
@@ -248,8 +240,9 @@ sap.ui.define([
         },
 
         /**
+         * Removes Selections for the table.
          * @private
-         * @description removes Selections for table.
+         * @returns {void}
          */
         _clearTableSelectedItems: function() {
             const oTable = this.byId("idProductsTable")
@@ -257,22 +250,25 @@ sap.ui.define([
         },
 
         /**
-         * @description close the dialog. when clicking No Button.
+         * Close the dialog.
+         * @private
+         * @returns {void}
         */
-        onNoButtonCloseDialogPress: function() {
-            this._oDialog.close()
+        _onButtonClosePress: function() {
+            const oMessagePopover = this.byId("idConfirmationMessagePopover")
+            oMessagePopover.close()
         },
 
         /**
+         * Reset all button icon to the default.
          * @private
-         * @param {object} oButton button press event, triggered on sort icon click. 
-         * @description reset all button icon to the default.
+         * @param {sap.m.Button} oButton
          */
         _resetSortIcon: function(oButton) {
             const oTable = this.byId("idProductsTable")
 
-            oTable.getColumns().forEach((el, i) => {
-                const oBtn = el.getHeader().getItems()[1]
+            oTable.getColumns().forEach(oEl => {
+                const oBtn = oEl.getHeader().getItems()[1]
                 if(oButton && oBtn === oButton) {
                     return
                 }
