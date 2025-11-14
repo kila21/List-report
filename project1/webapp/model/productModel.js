@@ -5,9 +5,9 @@ sap.ui.define([
     "sap/ui/model/Sorter"
 ], function(
 	JSONModel,
-    Filter,
-    FilterOperator,
-    Sorter
+	Filter,
+	FilterOperator,
+	Sorter
 ) {
 	"use strict";
 	return {
@@ -150,11 +150,20 @@ sap.ui.define([
 
         /**
          * Create sorter operation depending on property and descending value And return.
-         * @param {string} sProperty value of sort property
+         * Checks if property of sorting is rating, then grouping
+         * @param {string} sProperty
          * @param {boolean} bDescending
          * @returns {sap.ui.model.Sorter}
          */
         onSort: function(sProperty, bDescending) {
+            if (sProperty === 'rating') {
+                return new Sorter(sProperty, bDescending, function(oContext) {
+                    const iRating = oContext.getProperty('rating')
+                    const sStars = "★".repeat(iRating);
+
+                    return `${sStars} (${iRating} stars)`;   
+                })
+            }
             return new Sorter(sProperty, bDescending)
         }
     }

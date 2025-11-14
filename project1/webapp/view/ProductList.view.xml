@@ -175,7 +175,7 @@
                                     <customData>
                                         <core:CustomData
                                         key="sortProperty"
-                                        value="price"
+                                        value="rating"
                                         writeToDom="true"/>
                                     </customData>
                                 </Button>
