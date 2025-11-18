@@ -14,7 +14,7 @@ sap.ui.define([
 
 		// Assertions
       	Then.onTheViewPage.iShouldSeeThePageView();
-		Then.onTheViewPage.iShouldSeeTheTableWithItems()
+		Then.onTheViewPage.iShouldSeeTheTableWithItems(10)
 	});
 
 	opaTest("Should see the table selections", function(Given, When, Then) {
@@ -31,13 +31,14 @@ sap.ui.define([
 	});
 
 	opaTest("Should see the Selected Items are deleted", function(Given, When, Then) {
-		When.onTheViewPage.iSelectItems([2])
+		When.onTheViewPage.iSelectItems([0, 1])
 		Then.onTheViewPage.iShouldSeeTheButtonEnabled()
 		
 		When.onTheViewPage.iPressOnDeleteButton()
-		Then.onTheViewPage.iShouldSeeTheButtonEnabled()
-		// Then.onTheViewPage.iShouldSeeTheMessagePopover()
-		// Then.onTheViewPage.iShouldSeeItemsAreDeleted([1])
+		Then.onTheViewPage.iShouldSeeTheMessagePopover()
+
+		When.onTheViewPage.iPressOnConfirmDeletionButton()
+		Then.onTheViewPage.iShouldSeeTheTableWithItems(8)
 
 		Then.iTeardownMyApp()
 	})

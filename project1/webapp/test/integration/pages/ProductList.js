@@ -73,7 +73,18 @@ sap.ui.define([
 						actions: new Press(),
 						errorMessage: "Cant click on the Delete Button"
 					})
-				}
+				},
+
+				iPressOnConfirmDeletionButton: function() {
+					return this.waitFor({
+						controlType: "sap.m.Link",
+						viewName: sViewName,
+						matchers: new Properties({emphasized: true}),
+						actions: new Press(),
+						errorMessage: "Can not find the Link control."
+					})
+				} 
+				
 			},
 
 			assertions: {
@@ -88,15 +99,16 @@ sap.ui.define([
 					});
 				},
 
-				iShouldSeeTheTableWithItems: function () {
+				iShouldSeeTheTableWithItems: function (iItems) {
 					return this.waitFor({
 						id: sTableID,
 						viewName: sViewName,
-						matchers: new AggregationLengthEquals({name: "items", length: 10}),
+						matchers: new AggregationLengthEquals({name: "items", length: iItems}),
 						success: function(oTable) {
-							Opa5.assert.ok(oTable.getItems().length === 10, "The table at init have 10 item.")
+							const iTableLength = oTable.getItems().length
+							Opa5.assert.ok(iTableLength === iItems, "The Table items length is: " + iTableLength)
 						},
-						errorMessage: "The Table at init have not 10 item"
+						errorMessage: "The Table items length is Less/More then: " + iItems
 					})
 				},
 
@@ -142,27 +154,12 @@ sap.ui.define([
 					return this.waitFor({
 						id: "idConfirmationMessagePopover",
 						viewName: sViewName,
-						success: function (oMessage) {
-							console.log(oMessage)
+						success: function () {
 							Opa5.assert.ok(true, "Message Popover is displayed")
 						},
 						errorMessage: "Cannot find the messagePopover."
 					})
 				},
-
-				// iShouldSeeItemsAreDeleted: function(aIndex) {
-				// 	return this.waitFor({
-				// 		id: sTableID,
-				// 		viewName: sViewName,
-				// 		success: function (oTable) {
-				// 			const oItem = oTable.getItems()[1]
-				// 			oTable.removeItem(oItem)
-				// 			console.log('Deleted: ' + oDeleted)
-				// 			Opa5.assert.ok(true, "item removed: " + oTable.getItems().length)
-				// 		},
-				// 		errorMessage: "Cant remove the item"
-				// 	})
-				// }
 			}
 		}
 	});
