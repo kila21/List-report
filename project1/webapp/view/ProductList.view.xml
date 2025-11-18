@@ -89,6 +89,7 @@
                         <Toolbar>
                             <Button text="{i18n>buttonCreate}"></Button>
                             <Button 
+                             id="idDeleteButton"
                              press="onDeleteButtonPress"
                              text="{i18n>buttonDelete}" 
                              enabled="{deleteButtonModel>/deleteEnabled}" 
