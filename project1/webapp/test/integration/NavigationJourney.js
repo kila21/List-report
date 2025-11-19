@@ -40,6 +40,23 @@ sap.ui.define([
 		When.onTheViewPage.iPressOnConfirmDeletionButton()
 		Then.onTheViewPage.iShouldSeeTheTableWithItems(8)
 
+	}),
+	
+	opaTest("Should see the sorted Table", function(Given, When, Then) {
+		// check ascending order
+		When.onTheViewPage.iPressOnSortButton("name")
+
+		Then.onTheViewPage.iShouldSeeTheTableWithItems(8)
+		Then.onTheViewPage.iShouldSeeTheTableSortedBy("name", true)
+		
+		// check descending order
+		When.onTheViewPage.iPressOnSortButton("name")
+		Then.onTheViewPage.iShouldSeeTheTableSortedBy("name", false)
+
+		// sort with another property
+		When.onTheViewPage.iPressOnSortButton("price")
+		Then.onTheViewPage.iShouldSeeTheTableSortedBy("price", true)
+		
 		Then.iTeardownMyApp()
 	})
 });

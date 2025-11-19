@@ -3,12 +3,14 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/AggregationContainsPropertyEqual",
 	"sap/ui/test/actions/Press"
 ], function (
 	Opa5,
 	AggregationLengthEquals,
 	Properties,
 	PropertyStrictEquals,
+	AggregationContainsPropertyEqual,
 	Press
 ) {
 	"use strict";
@@ -83,8 +85,21 @@ sap.ui.define([
 						actions: new Press(),
 						errorMessage: "Can not find the Link control."
 					})
-				} 
-				
+				},
+
+				iPressOnSortButton: function(sSortProperty) {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						viewName: sViewName,
+						matchers: new AggregationContainsPropertyEqual({
+							aggregationName: "customData",
+							propertyName: "value",
+                			propertyValue: sSortProperty
+						}),
+						actions: new Press(),
+						errorMessage: "Can not find the Sort button."
+					})
+				}
 			},
 
 			assertions: {
@@ -160,6 +175,39 @@ sap.ui.define([
 						errorMessage: "Cannot find the messagePopover."
 					})
 				},
+
+				iShouldSeeTheTableSortedBy: function(sSortProperty, bAscending=null) {
+					return this.waitFor({
+						id: sTableID,
+						viewName: sViewName,
+						success: function(oTable) {
+							const aContexts = oTable.getBinding("items").getCurrentContexts()
+							const aItems = aContexts.map(oItem => oItem.getProperty(sSortProperty))
+							const aOriginal = oTable.getModel("productsModel")
+							.getProperty("/products")
+							.map(oItem => oItem[sSortProperty])
+							
+							if(typeof bAscending === 'boolean') {
+								if(sSortProperty === 'price') {
+									aOriginal.sort((a, b) => a - b)
+								} else {
+									aOriginal.sort((a, b) => a.localeCompare(b))
+								}
+
+								if (typeof bAscending === 'boolean' && !bAscending) {
+									aOriginal.reverse()
+								}
+							}
+							
+							Opa5.assert.deepEqual(
+								aItems,
+								aOriginal,
+								"Table sorted correctly."
+							)
+						},
+						errorMessage: "Table sorted incorrectly."
+					})
+				}
 			}
 		}
 	});
