@@ -2,8 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/test/opaQunit",
-	"./pages/App",
-	"./pages/ProductList"
+	"project1/test/integration/pages/ProductList"
 ], function (opaTest) {
 	"use strict";
 
@@ -14,10 +13,32 @@ sap.ui.define([
 		Given.iStartMyApp();
 
 		// Assertions
-		Then.onTheAppPage.iShouldSeeTheApp();
       	Then.onTheViewPage.iShouldSeeThePageView();
-
-		//Cleanup
-		Then.iTeardownMyApp();
+		Then.onTheViewPage.iShouldSeeTheTableWithItems()
 	});
+
+	opaTest("Should see the table selections", function(Given, When, Then) {
+		When.onTheViewPage.iSelectItems([0, 1, 2])
+
+		Then.onTheViewPage.iShouldSeeSelectedItems(3)
+		Then.onTheViewPage.iShouldSeeTheButtonEnabled()
+
+		When.onTheViewPage.iDeselectItems()
+
+		Then.onTheViewPage.iShouldSeeSelectedItems(0)
+		Then.onTheViewPage.iShouldSeeTheButtonDisabled()
+		
+	});
+
+	opaTest("Should see the Selected Items are deleted", function(Given, When, Then) {
+		When.onTheViewPage.iSelectItems([2])
+		Then.onTheViewPage.iShouldSeeTheButtonEnabled()
+		
+		When.onTheViewPage.iPressOnDeleteButton()
+		Then.onTheViewPage.iShouldSeeTheButtonEnabled()
+		// Then.onTheViewPage.iShouldSeeTheMessagePopover()
+		// Then.onTheViewPage.iShouldSeeItemsAreDeleted([1])
+
+		Then.iTeardownMyApp()
+	})
 });

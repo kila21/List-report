@@ -1,17 +1,19 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
+    "sap/ui/model/FilterOperator",
+    "sap/ui/model/Sorter"
 ], function(
 	JSONModel,
-    Filter,
-    FilterOperator
+	Filter,
+	FilterOperator,
+	Sorter
 ) {
 	"use strict";
 	return {
         /**
+         * Load data from data.json file and Return it.
          * @returns {sap.ui.model.json.JSONModel}
-         * @description load data from data.json file
          */
         createProductModel: function() {
             const oProductModel = new JSONModel()
@@ -21,65 +23,65 @@ sap.ui.define([
         },
 
         /**
-         * @param {object} oModel model of porducts data
-         * @returns {sap.ui.model.json.JSONModel} JsonModel of categories(id, name) object.
-         * @description Loop through the all category object and get unique ones.
+         * Loop through the all category object and get unique ones.
          * Create jsonModel and return it.
+         * @param {sap.ui.model.json.JSONModel} oModel model of products data
+         * @returns {sap.ui.model.json.JSONModel}
          */
         getAllCategory: function(oModel) {
             const aProducts = oModel.getProperty("/products")
             const aCategories = []
 
-            const aAllCategory = aProducts.reduce((acc, product) => {
-                return acc.concat(product.categories)
+            const aAllCategory = aProducts.reduce((aAcc, oProduct) => {
+                return aAcc.concat(oProduct.categories)
             }, [])
             
-            aAllCategory.forEach(category => {
-                if(!aCategories.some(cat => cat.id === category.id)) {
-                    aCategories.push(category)
+            aAllCategory.forEach(oCategory => {
+                if(!aCategories.some(oCat => oCat.id === oCategory.id)) {
+                    aCategories.push(oCategory)
                 }
             })
             return new JSONModel({categories: aCategories})
         },
 
         /**
-         * @param {object} oModel model of products data.
-         * @description Loop products and get all suppliers. 
-         * Loop suppliers and get Uniques.
-         * create new JSONModel and return it.
+         * Loop through the all suppliers object and get uniques.
+         * Create new JSONModel and return it.
+         * @param {sap.ui.model.json.JSONModel} oModel model of products data.
+         * @returns {sap.ui.model.json.JSONModel}
          */
         getAllSupplier: function(oModel) {
             const aProducts = oModel.getProperty("/products")
             const aSuppliers = []
 
-            const aAllSupplier = aProducts.reduce((acc, product) => {
-                return acc.concat(product.suppliers)
+            const aAllSupplier = aProducts.reduce((aAcc, oProduct) => {
+                return aAcc.concat(oProduct.suppliers)
             }, [])
             
-            aAllSupplier.forEach(supplier => {
-                if(!aSuppliers.some(sup => sup.id === supplier.id)) {
-                    aSuppliers.push(supplier)
+            aAllSupplier.forEach(oSupplier => {
+                if(!aSuppliers.some(sup => sup.id === oSupplier.id)) {
+                    aSuppliers.push(oSupplier)
                 }
             })
             return new JSONModel({suppliers: aSuppliers})
         },
 
         /**
-         * @param {object} oModel model of products.
-         * @param {Array} aID array of product id.
-         * @description filter products data with an id.
-         * @returns {Array} array of updeted products.
+         * Filter products data with an id And Delete.
+         * @param {sap.ui.model.json.JSONModel} oModel model of products.
+         * @param {string[]} aID array of product ids.
+         * @returns {Object[]} array of updated product objects.
          */
         deleteProducts: function(oModel, aID) {
             const aProducts = oModel.getProperty("/products")
-            const aUpdatedProducts = aProducts.filter(product => !aID.includes(product.id))
+            const aUpdatedProducts = aProducts.filter(oProduct => !aID.includes(oProduct.id))
             return aUpdatedProducts
         },
 
         /**
+         * Search Filter for the products name.
          * @param {string} sValue string of search query
-         * @returns {Array} Array of filter options.
-         * @description Search Filter, For product names.
+         * @returns {sap.ui.model.Filter[]} Array of filter objects.
          */
         onNameSearch: function(sValue) {
             const aFilter = []
@@ -90,49 +92,49 @@ sap.ui.define([
         },
 
         /**
-         * @param {Array} aKeys array of selected keys.
-         * @returns {object || null}
-         * @description check if keys are selected, if not return null.
-         * filter products with category id. and return new filter object for MultiComboBox.
+         * Filter funtionality for MultiComboBox.
+         * @param {string[]} aKeys array of selected keys.
+         * @returns {sap.ui.model.Filter || null}
          */
         onMultiComboBox: function(aKeys) {
-            // If no keys selected, don't create a filter
             if (!aKeys || !Array.isArray(aKeys) || aKeys.length === 0) {
                 return null
             }
+
             // custom filter
             const oFilter = new Filter({
                 path: "categories",
                 test: function(aCategories) {
-                    return aCategories.some(cat => aKeys.includes(cat.id))
+                    return aCategories.some(oCat => aKeys.includes(oCat.id))
                 }
             })
             return oFilter
         },
 
         /**
-         * @param {Date} startDate 
-         * @param {Date} dDate
-         * @returns {object || null} filter object or  null.
-         * @description get start and end date toISOString. and return new filter for DateRangeSelection.
+         * Get start and end date toISOString. and return new filter for DateRangeSelection.
+         * @param {Date} dStartDate 
+         * @param {Date} dEndDate
+         * @returns {sap.ui.model.Filter || null}
          */
-        onReleaseDate: function(startDate, endDate) {
-            if(startDate && endDate) {
-                const dStart = startDate.toISOString()
-                const dEnd = endDate.toISOString()
+        onReleaseDate: function(dStartDate, dEndDate) {
+            if(dStartDate && dEndDate) {
+                const dStart = dStartDate.toISOString()
+                const dEnd = dEndDate.toISOString()
                 return new Filter({
                     path: "releaseDate",
                     operator: FilterOperator.BT,
                     value1: dStart,
                     value2: dEnd,
                 })
-            } else return null
+            }
+            return null
         },
 
         /**
-         * @param {string} sValue value of input field.
-         * @returns {object || null} object of new filter
-         * @description create new custom filter object for suppliers and return it.
+         * create new custom filter object for suppliers and return it.
+         * @param {string} sValue value of input field with suggestion.
+         * @returns {sap.ui.model.Filter || null}
          */
         onSuppliersSearch: function(sValue) {
             if (sValue) {
@@ -144,6 +146,25 @@ sap.ui.define([
                 })
             }
             return null
+        },
+
+        /**
+         * Create sorter operation depending on property and descending value And return.
+         * Checks if property of sorting is rating, then grouping
+         * @param {string} sProperty
+         * @param {boolean} bDescending
+         * @returns {sap.ui.model.Sorter}
+         */
+        onSort: function(sProperty, bDescending) {
+            if (sProperty === 'rating') {
+                return new Sorter(sProperty, bDescending, function(oContext) {
+                    const iRating = oContext.getProperty('rating')
+                    const sStars = "★".repeat(iRating);
+
+                    return `${sStars} (${iRating} stars)`;   
+                })
+            }
+            return new Sorter(sProperty, bDescending)
         }
     }
 });
