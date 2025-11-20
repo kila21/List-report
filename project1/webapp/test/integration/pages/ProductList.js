@@ -4,14 +4,16 @@ sap.ui.define([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/AggregationContainsPropertyEqual",
-	"sap/ui/test/actions/Press"
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/actions/EnterText"
 ], function (
 	Opa5,
 	AggregationLengthEquals,
 	Properties,
 	PropertyStrictEquals,
 	AggregationContainsPropertyEqual,
-	Press
+	Press,
+	EnterText
 ) {
 	"use strict";
 
@@ -83,7 +85,7 @@ sap.ui.define([
 						viewName: sViewName,
 						matchers: new Properties({emphasized: true}),
 						actions: new Press(),
-						errorMessage: "Can not find the Link control."
+						errorMessage: "Could not find the Link control."
 					})
 				},
 
@@ -97,9 +99,103 @@ sap.ui.define([
                 			propertyValue: sSortProperty
 						}),
 						actions: new Press(),
-						errorMessage: "Can not find the Sort button."
+						errorMessage: "Could not find the Sort button."
 					})
-				}
+				},
+
+				iSearchForName: function(sSearchString) {
+					return this.waitFor({
+						controlType: "sap.m.SearchField",
+						viewName: sViewName,
+						actions: new EnterText({
+							text: sSearchString
+						}),
+						errorMessage: "SearchField was not found."
+					})
+				},
+
+				iPressOnMultiComboBoxIcon: function () {
+					return this.waitFor({
+						controlType: "sap.ui.core.Icon",
+						viewName: sViewName,
+						matchers: [
+							new PropertyStrictEquals({
+								name: "src",
+								value: "sap-icon://slim-arrow-down"
+							})
+						],
+						actions: new Press(),
+						errorMessage: "Could not find MultiComboBox Icon."
+					})
+				},
+				
+				iSelectCategoryItems: function (aIndex) {
+					return this.waitFor({
+						controlType: "sap.m.List",
+						success: function (aLists) {
+							const oList = aLists[0];
+							const aItems = oList.getItems();
+
+							aIndex.forEach(function (iIndex) {
+								new Press().executeOn(aItems[iIndex]);
+							});
+							Opa5.assert.ok(true, "Categories Selected Successfuly");
+						},
+						errorMessage: "Dropdown list not found"
+					});
+				},
+
+				iSetDateRange: function (sFrom, sTo) {
+					const sValue = `${sFrom} - ${sTo}`
+					return this.waitFor({
+						controlType: "sap.m.DateRangeSelection",
+						viewName: sViewName,
+						actions: new EnterText({ text: sValue }),
+						success: function () {
+							Opa5.assert.ok(true, "Date range set via text input.");
+						},
+						errorMessage: "DateRangeSelection not found."
+					});
+				},
+
+				iSearchWithSuggestionInput: function (sText) {
+					return this.waitFor({
+						controlType: "sap.m.Input",
+						viewName: sViewName,
+						actions: new EnterText({ text: sText }),
+						success: function () {
+							Opa5.assert.ok(true, "Text entered into suggestion input.");
+						},
+						errorMessage: "Suggestion input not found."
+					});
+				},
+
+				iPressOnFilterBarSearch: function () {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						viewName: sViewName,
+						matchers: [
+							new Properties({text: 'Go'}),
+							new Properties({type: 'Emphasized'})
+						],
+						actions: new Press(),
+						errorMessage: "Could not find FilterBar Search button"
+					});
+				},
+
+				iPressOnFilterClearButton: function () {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						viewName: sViewName,
+						matchers: [
+							new Properties({text: 'Clear'}),
+							new Properties({type: 'Transparent'})
+						],
+						actions: new Press(),
+						errorMessage: "Could not find FilterBar Clear button"
+					});
+				},
+
 			},
 
 			assertions: {
@@ -206,6 +302,55 @@ sap.ui.define([
 							)
 						},
 						errorMessage: "Table sorted incorrectly."
+					})
+				},
+
+				iShouldSeeTheTableFiltered: function(sName, aCategories, oDate, sSupplier) {
+					return this.waitFor({
+						id: sTableID,
+						viewName: sViewName,
+						success: function(oTable) {
+							const aContexts = oTable.getBinding("items").getCurrentContexts()
+							const aItems = aContexts.map(oItem => oItem.getObject())
+							const aOriginal = oTable.getModel("productsModel").getProperty("/products")
+
+							let aResult = aOriginal
+
+							if (sName) {
+								aResult = aResult.filter(oItem => oItem.name.toLowerCase().includes(sName))
+							}
+
+							if (aCategories && aCategories.length > 0) {
+								aResult = aResult.filter(item =>
+									item.categories.some(oCat =>
+										aCategories.includes(oCat.name)
+									)
+								);
+							}
+
+							if (oDate) {
+								const sStartDate = new Date(oDate.sStart)
+								const sEndDate = new Date(oDate.sEnd)
+
+								aResult = aResult.filter(oItem => {
+									const date = new Date(oItem.releaseDate); 
+									return date >= sStartDate && date <= sEndDate;
+								});
+							}
+
+							if (sSupplier) {
+								aResult = aResult.filter(oItem => {
+									return oItem.suppliers.some(oSup => oSup.name === sSupplier)
+								})
+							}
+
+							Opa5.assert.deepEqual(
+								aItems, 
+								aResult,
+								"Table filtered correctly."
+							)
+						},
+						errorMessage: "Table filter dont work."
 					})
 				}
 			}
