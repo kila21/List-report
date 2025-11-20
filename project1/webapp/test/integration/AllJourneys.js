@@ -8,6 +8,8 @@ sap.ui.define([
 	Opa5.extendConfig({
 		arrangements: new Startup(),
 		viewNamespace: "project1.view.",
-		autoWait: true
+		autoWait: true,
+		timeout: 60,
+    	pollingInterval: 200
 	});
 });
