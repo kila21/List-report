@@ -8,30 +8,63 @@
         <uxap:headerTitle>
             <uxap:ObjectPageDynamicHeaderTitle >
                 <uxap:expandedHeading>
-                    <Title text="Product Title"></Title>
+                    <Title text="{productsModel>name}"></Title>
                 </uxap:expandedHeading>
 
                 <uxap:snappedHeading>
-                    <Title text="Product Title"/>
+                    <Title text="{productsModel>name}"/>
                 </uxap:snappedHeading>
 
                 <uxap:expandedContent>
-                    <Text text="product description"/>
+                    <Text text="{productsModel>description}"/>
                 </uxap:expandedContent>
 
                 <uxap:snappedContent>
-                    <Text text="product description"/>
+                    <Text text="{productsModel>description}"/>
                 </uxap:snappedContent>               
             </uxap:ObjectPageDynamicHeaderTitle>
         </uxap:headerTitle>
 
         <uxap:headerContent>
-            <VBox>
-                <Title text="release information"></Title>
-                <ObjectStatus title="Total time" text="XX days"></ObjectStatus>
-                <ObjectStatus state="Success" text="SALE" class="sapMObjectStatusLarge"></ObjectStatus>
-                <tnt:InfoLabel text="New"></tnt:InfoLabel>
-            </VBox>
+            <HBox >
+                <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                    <Title text="Release Information"></Title>
+                    <ObjectStatus 
+                    title="Total Time" 
+                    text="{
+                        path: 'productsModel>releaseDate',
+                        formatter: '.formatter.displayTotalDays'
+                    }">
+                    </ObjectStatus>
+
+                    <ObjectStatus state="{
+                        path: 'productsModel>discountDate',
+                        formatter: '.formatter.displaySaleWithState'
+                    }" 
+                    text="SALE"
+                    class="sapMObjectStatusLarge">
+                    </ObjectStatus>
+
+                    <tnt:InfoLabel
+                    visible="{
+                        path: 'productsModel>releaseDate',
+                        formatter: '.formatter.displayLabelNew'
+                    }"
+                    text="New">
+                    </tnt:InfoLabel>
+                </VBox>
+
+                <VBox>
+                    <Title text="Price"/>
+
+                    <ObjectNumber 
+                     number="{productsModel>price}"
+                     unit="USD"
+                     state="Success"
+                     class="sapMObjectNumberLarge">
+                    </ObjectNumber>
+                </VBox>
+            </HBox>
         </uxap:headerContent>
 
         <uxap:sections>

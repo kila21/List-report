@@ -17,15 +17,14 @@ sap.ui.define([
         formatter: formatter,
 
         /**
-         * set productsModal to the view.
+         * get productsModal from the Application.
          * when request is Completed set categories and Suppliers Model.(filter options)
          * set model for delete button.(Enabled or not)
          * set model for filter options.
          * @override
          */
         onInit() {
-            const oProductsModel = productModel.createProductModel()
-            this.setModel(oProductsModel, "productsModel")
+            const oProductsModel = this.getOwnerComponent().getModel("productsModel")
 
             oProductsModel.attachEventOnce("requestCompleted", () => {
                 const oCategories = productModel.getAllCategory(oProductsModel)

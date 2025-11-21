@@ -7,7 +7,8 @@ sap.ui.define([
 	return {
         ValueState: {
             SUCCESS: "Success",
-            NONE: "None"
+            NONE: "None",
+            ERROR: "Error"
         },
 
         SortIcons: {

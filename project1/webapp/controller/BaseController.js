@@ -22,7 +22,7 @@ sap.ui.define([
          * @description helper function that returns the router instance
          *              associated with this controller (used for navigation).
          */
-        _getRouter : function () {
+        getRouter : function () {
             return UIComponent.getRouterFor(this);
         },
     
@@ -56,7 +56,7 @@ sap.ui.define([
          *              and `bReplace` controls history replacement.
          */
         navTo: function(sName, oParameters, bReplace) {
-            this._getRouter().navTo(sName, oParameters, undefined, bReplace)
+            this.getRouter().navTo(sName, oParameters, undefined, bReplace)
         }
 	});
 });
