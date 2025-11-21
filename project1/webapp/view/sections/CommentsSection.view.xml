@@ -1,0 +1,13 @@
+<mvc:View
+	controllerName="project1.controller.sections.CommentsSection"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	displayBlock="true"
+	height="100%"
+	busyIndicatorDelay="0">
+
+    <VBox>
+        <Title text="Comments Section"/>
+        <Text text="Comments description....."/>
+    </VBox>
+</mvc:View>

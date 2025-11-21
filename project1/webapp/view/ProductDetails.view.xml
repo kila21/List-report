@@ -1,7 +1,69 @@
-<mvc:View controllerName="project1.controller.ProductDetails"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
-    <Page id="idProductDetailsPage" title="{i18n>productDetailsTitle}">
-        <Button id="idTestButton" text="test"></Button>
-    </Page>
+<mvc:View 
+ xmlns:tnt="sap.tnt" 
+ xmlns:uxap="sap.uxap" 
+ controllerName="project1.controller.ProductDetails"
+ xmlns:mvc="sap.ui.core.mvc"
+ xmlns="sap.m">
+    <uxap:ObjectPageLayout id="idObjectPageLayout">
+        <uxap:headerTitle>
+            <uxap:ObjectPageDynamicHeaderTitle >
+                <uxap:expandedHeading>
+                    <Title text="Product Title"></Title>
+                </uxap:expandedHeading>
+
+                <uxap:snappedHeading>
+                    <Title text="Product Title"/>
+                </uxap:snappedHeading>
+
+                <uxap:expandedContent>
+                    <Text text="product description"/>
+                </uxap:expandedContent>
+
+                <uxap:snappedContent>
+                    <Text text="product description"/>
+                </uxap:snappedContent>               
+            </uxap:ObjectPageDynamicHeaderTitle>
+        </uxap:headerTitle>
+
+        <uxap:headerContent>
+            <VBox>
+                <Title text="release information"></Title>
+                <ObjectStatus title="Total time" text="XX days"></ObjectStatus>
+                <ObjectStatus state="Success" text="SALE" class="sapMObjectStatusLarge"></ObjectStatus>
+                <tnt:InfoLabel text="New"></tnt:InfoLabel>
+            </VBox>
+        </uxap:headerContent>
+
+        <uxap:sections>
+            <uxap:ObjectPageSection id="idProductDetailSection" title="Product Details">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection >
+                        <uxap:blocks>
+                            <mvc:XMLView viewName="project1.view.sections.ProductDetailsSection"></mvc:XMLView>
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+            
+            <uxap:ObjectPageSection id="idProductSuppliersSection" title="Suppliers">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection >
+                         <uxap:blocks>
+                            <mvc:XMLView viewName="project1.view.sections.SuppliersSection"></mvc:XMLView>
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+
+            <uxap:ObjectPageSection id="idProductCommentsSection" title="Comments">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection >
+                         <uxap:blocks>
+                            <mvc:XMLView viewName="project1.view.sections.CommentsSection"></mvc:XMLView>
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+        </uxap:sections>
+    </uxap:ObjectPageLayout>
 </mvc:View>

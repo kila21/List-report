@@ -1,0 +1,14 @@
+<mvc:View
+	controllerName="project1.controller.sections.ProductDetailsSection"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	displayBlock="true"
+	height="100%"
+	busyIndicatorDelay="0">
+
+    <VBox>
+        <Title text="Product Detail Section"></Title>
+        <Text text="description..........."></Text>
+    </VBox>
+        
+</mvc:View>

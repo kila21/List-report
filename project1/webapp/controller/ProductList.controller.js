@@ -220,6 +220,16 @@ sap.ui.define([
         },
 
         /**
+         * Clicking on the item inside the table will navigate to the object page.
+         * @param {sap.ui.base.Event} oEvent
+         * 
+         */
+        onProductsTableItemPress: function(oEvent) {
+            const sClickedID = oEvent.getParameter("listItem").getBindingContext("productsModel").getProperty("id")
+            this.navTo("RouteProductDetails", {productID: sClickedID})
+        },
+
+        /**
          * Changes the state of button Delete
          * @private
          * @param {boolean} bEnable true if button is enable, false if not.
