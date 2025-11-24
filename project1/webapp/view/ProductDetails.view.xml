@@ -1,4 +1,4 @@
-<mvc:View 
+<mvc:View
  xmlns:tnt="sap.tnt" 
  xmlns:uxap="sap.uxap" 
  controllerName="project1.controller.ProductDetails"
@@ -108,12 +108,28 @@
         </uxap:sections>
 
         <uxap:footer>
-            <Bar >
+            <Bar>
+                <contentLeft>
+                    <Button 
+                     icon="sap-icon://alert"
+                     type="Negative"
+                     text="{= ${message>/}.length }"
+                     press="onMessagePopoverPress"/>
+                </contentLeft>
                 <contentRight>
-                    <Button text="Save" press="onSaveButtonPress"/>
+                    <Button enabled="{= ${message>/}.length === 0}" text="Save" press="onSaveButtonPress"/>
                     <Button text="Cancel" type="Reject" press="onCancelButtonPress"/>
                 </contentRight>
             </Bar>
         </uxap:footer>
     </uxap:ObjectPageLayout>
+
+
+    <MessagePopover items="{message>/}" id="idMessagePopover">
+		<MessageItem 
+			type="{message>type}"
+			title="{message>message}"
+			subtitle="{message>additionalText}"
+			description="{message>description}"/>
+	</MessagePopover>
 </mvc:View>

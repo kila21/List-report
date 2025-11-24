@@ -3,12 +3,16 @@ sap.ui.define([
     "project1/model/formatter",
     "project1/model/productModel",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessageToast"
-], (BaseController,
-	formatter,
-	productModel,
-	JSONModel,
-	MessageToast) => {
+	"sap/m/MessageToast",
+    "sap/ui/core/Messaging",
+], (
+    BaseController,
+    formatter,
+    productModel,
+    JSONModel,
+    MessageToast,
+    Messaging
+) => {
     "use strict";
 
     return BaseController.extend("project1.controller.ProductDetails", {
@@ -22,6 +26,7 @@ sap.ui.define([
         /**
          * On patter match, Find index depending on the productID and bind it to the view.
          * Create local model for Edit Mode.
+         * Create local model for Validations.
          * @private
          * @param {sap.ui.base.Event} oEvent
          */
@@ -40,7 +45,23 @@ sap.ui.define([
 
             const oEditModeModel = new JSONModel({editable: false})
             this.setModel(oEditModeModel, "viewStateModel")
+
+            Messaging.removeAllMessages()
+            const oView = this.getView()
+            this.setModel(Messaging.getMessageModel(), "message");
+            Messaging.registerObject(oView, true)
         },
+
+        
+        /**
+         * Opens MessagePopover.
+         * @param {sap.ui.base.Event} oEvent 
+         */
+        onMessagePopoverPress: async function(oEvent) {
+			const oSourceControl = oEvent.getSource();
+			const oMessagePopover = this.byId("idMessagePopover")
+			oMessagePopover.openBy(oSourceControl);
+		},
 
         /**
          * Change state of the view. From read-only to Edit Mode.

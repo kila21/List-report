@@ -4,39 +4,66 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
-	busyIndicatorDelay="0">
+	busyIndicatorDelay="0"
+	models="{message: ${message}}">
 
     <form:SimpleForm editable="false">
 		<form:content>
-			<Label text="Name"/>
-			<Input value="{detailsFormModel>/name}" editable="{= ${viewStateModel>/editable}}"/>
+			<Label text="Name" class="sapUiTinyMarginTop"/>
+			<Input 
+			 name="name"
+			 value="{detailsFormModel>/name}" 
+			 change="onInputChange"
+			 editable="{= ${viewStateModel>/editable}}"/>
 
 			<Label text="Description"/>
-			<Input value="{detailsFormModel>/description}" editable="{= ${viewStateModel>/editable}}"/>
+			<Input 
+			 name="description"
+			 value="{detailsFormModel>/description}" 
+			 editable="{= ${viewStateModel>/editable}}"
+			 change="onInputChange"/>
 		
+			<Label text="Rating" class="sapUiTinyMarginTop"/>
+			<Input
+			 name="rating"
+			 type="Number"
+			 value="{detailsFormModel>/rating}" 
+			 editable="{= ${viewStateModel>/editable}}"
+			 change="onInputChange"/>
 
-			<Label text="Rating"/>
-			<Input type="Number" value="{detailsFormModel>/rating}" editable="{= ${viewStateModel>/editable}}"/>
+			<Label text="Release Date" class="sapUiTinyMarginTop"/>
+			<DatePicker 
+			 name="releaseDate"
+			 value="{detailsFormModel>/releaseDate}" 
+			 editable="{= ${viewStateModel>/editable}}"
+			 change="onInputChange"/>
 
-			<Label text="Release Date"/>
-			<DatePicker value="{detailsFormModel>/releaseDate}" editable="{= ${viewStateModel>/editable}}"/>
+			<Label text="Discount Date" class="sapUiTinyMarginTop"/>
+			<DatePicker 
+			 name="discountDate"
+			 value="{detailsFormModel>/discountDate}" 
+			 editable="{= ${viewStateModel>/editable}}"
+			 change="onInputChange"/>
 
-			<Label text="Discount Date"/>
-			<DatePicker value="{detailsFormModel>/discountDate}" editable="{= ${viewStateModel>/editable}}"/>
+			<Label text="Price" class="sapUiTinyMarginTop"/>
+			<Input 
+			 name="price"
+			 type="Number" 
+			 value="{detailsFormModel>/price}"
+			 editable="{= ${viewStateModel>/editable}}"
+			 change="onInputChange"/>
 
-			<Label text="Price"/>
-			<Input type="Number" value="{detailsFormModel>/price}" editable="{= ${viewStateModel>/editable}}"/>
-
-			<Label text="Categories"/>
+			<Label text="Categories" class="sapUiTinyMarginTop"/>
 			<MultiComboBox 
+			 name="categories"
 			 selectedKeys="{detailsFormModel>/categories}" 
 			 editable="{= ${viewStateModel>/editable}}"
-			 items="{categoriesModel>/categories}">
+			 items="{categoriesModel>/categories}"
+			 change="onInputChange">
 				<core:Item 
 				 key="{categoriesModel>id}"
 				 text="{categoriesModel>name}"/>
 			</MultiComboBox>
-			
 		</form:content>
 	</form:SimpleForm>
         
