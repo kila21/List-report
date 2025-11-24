@@ -17,14 +17,11 @@ sap.ui.define([
 
         onInit() {
             this.getRouter().getRoute("RouteProductDetails").attachPatternMatched(this._onRouteMatched, this)
-            
-            const oEditModeModel = new JSONModel({editable: false})
-            this.getView().setModel(oEditModeModel, "viewStateModel")
         },
-
 
         /**
          * On patter match, Find index depending on the productID and bind it to the view.
+         * Create local model for Edit Mode.
          * @private
          * @param {sap.ui.base.Event} oEvent
          */
@@ -40,6 +37,9 @@ sap.ui.define([
                     model: "productsModel"
                 })
             }
+
+            const oEditModeModel = new JSONModel({editable: false})
+            this.setModel(oEditModeModel, "viewStateModel")
         },
 
         /**

@@ -17,22 +17,29 @@ sap.ui.define([
         formatter: formatter,
 
         /**
-         * get productsModal from the Application.
-         * when request is Completed set categories and Suppliers Model.(filter options)
-         * set model for delete button.(Enabled or not)
-         * set model for filter options.
+         * call the attachPatterMatch method.
          * @override
          */
         onInit() {
-            const oProductsModel = this.getOwnerComponent().getModel("productsModel")
+            this.getRouter().getRoute("RouteProductList").attachPatternMatched(this._onRouteMatched, this)
+        },
 
-            oProductsModel.attachEventOnce("requestCompleted", () => {
-                const oCategories = productModel.getAllCategory(oProductsModel)
-                this.setModel(oCategories, "categoriesModel")
 
-                const oSuppliers = productModel.getAllSupplier(oProductsModel)
-                this.setModel(oSuppliers, "suppliersModel")
-            })
+        /**
+         * Set categories and Suppliers Model.(filter options)
+         * set model for delete button.(Enabled or not)
+         * set model for filter options.
+         * @returns {void}
+         */
+        _onRouteMatched: function () {
+            const oProductsModel = this.getModel("productsModel")
+
+            const oCategories = productModel.getAllCategory(oProductsModel)
+            this.setModel(oCategories, "categoriesModel")
+
+            const oSuppliers = productModel.getAllSupplier(oProductsModel)
+            this.setModel(oSuppliers, "suppliersModel")
+            
 
             const oDeleteButtonModel = new JSONModel({
                 deleteEnabled: false
