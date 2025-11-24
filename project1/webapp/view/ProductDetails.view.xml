@@ -4,7 +4,10 @@
  controllerName="project1.controller.ProductDetails"
  xmlns:mvc="sap.ui.core.mvc"
  xmlns="sap.m">
-    <uxap:ObjectPageLayout id="idObjectPageLayout">
+    <uxap:ObjectPageLayout 
+     id="idObjectPageLayout" 
+     showEditHeaderButton="true" 
+     showFooter="{= ${viewStateModel>/editable}}">
         <uxap:headerTitle>
             <uxap:ObjectPageDynamicHeaderTitle >
                 <uxap:expandedHeading>
@@ -21,7 +24,12 @@
 
                 <uxap:snappedContent>
                     <Text text="{productsModel>description}"/>
-                </uxap:snappedContent>               
+                </uxap:snappedContent> 
+
+                <uxap:actions>
+                    <Button text="Edit" press="onEditButtonPress"></Button>
+                    <Button text="Delete" type="Reject" press="onDeleteButtonPress"></Button>
+                </uxap:actions>       
             </uxap:ObjectPageDynamicHeaderTitle>
         </uxap:headerTitle>
 
@@ -98,5 +106,14 @@
                 </uxap:subSections>
             </uxap:ObjectPageSection>
         </uxap:sections>
+
+        <uxap:footer>
+            <Bar >
+                <contentRight>
+                    <Button text="Save" press="onSaveButtonPress"/>
+                    <Button text="Cancel" type="Reject" press="onCancelButtonPress"/>
+                </contentRight>
+            </Bar>
+        </uxap:footer>
     </uxap:ObjectPageLayout>
 </mvc:View>
