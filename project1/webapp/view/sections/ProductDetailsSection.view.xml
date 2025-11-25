@@ -9,21 +9,21 @@
 
     <form:SimpleForm editable="false">
 		<form:content>
-			<Label text="Name" class="sapUiTinyMarginTop"/>
+			<Label text="{i18n>productFormNameLabel}" class="sapUiTinyMarginTop"/>
 			<Input 
 			 name="name"
 			 value="{detailsFormModel>/name}" 
 			 change="onInputChange"
 			 editable="{= ${viewStateModel>/editable}}"/>
 
-			<Label text="Description"/>
+			<Label text="{i18n>productFormDescriptionLabel}"/>
 			<Input 
 			 name="description"
 			 value="{detailsFormModel>/description}" 
 			 editable="{= ${viewStateModel>/editable}}"
 			 change="onInputChange"/>
 		
-			<Label text="Rating" class="sapUiTinyMarginTop"/>
+			<Label text="{i18n>productFormRatingLabel}" class="sapUiTinyMarginTop"/>
 			<Input
 			 name="rating"
 			 type="Number"
@@ -31,21 +31,21 @@
 			 editable="{= ${viewStateModel>/editable}}"
 			 change="onInputChange"/>
 
-			<Label text="Release Date" class="sapUiTinyMarginTop"/>
+			<Label text="{i18n>productFormReleaseDateLabel}" class="sapUiTinyMarginTop"/>
 			<DatePicker 
 			 name="releaseDate"
 			 value="{detailsFormModel>/releaseDate}" 
 			 editable="{= ${viewStateModel>/editable}}"
 			 change="onInputChange"/>
 
-			<Label text="Discount Date" class="sapUiTinyMarginTop"/>
+			<Label text="{i18n>productFormDiscountDateLabel}" class="sapUiTinyMarginTop"/>
 			<DatePicker 
 			 name="discountDate"
 			 value="{detailsFormModel>/discountDate}" 
 			 editable="{= ${viewStateModel>/editable}}"
 			 change="onInputChange"/>
 
-			<Label text="Price" class="sapUiTinyMarginTop"/>
+			<Label text="{i18n>productFormPriceLabel}" class="sapUiTinyMarginTop"/>
 			<Input 
 			 name="price"
 			 type="Number" 
@@ -53,7 +53,7 @@
 			 editable="{= ${viewStateModel>/editable}}"
 			 change="onInputChange"/>
 
-			<Label text="Categories" class="sapUiTinyMarginTop"/>
+			<Label text="{i18n>productFormCategoriesLabel}" class="sapUiTinyMarginTop"/>
 			<MultiComboBox 
 			 name="categories"
 			 selectedKeys="{detailsFormModel>/categories}" 

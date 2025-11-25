@@ -1,6 +1,7 @@
 sap.ui.define([
 	"project1/controller/BaseController",
 	"project1/model/productModel",
+	"project1/model/constants",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
@@ -8,6 +9,7 @@ sap.ui.define([
 ], function(
 	BaseController,
 	productModel,
+	constants,
 	JSONModel,
 	Messaging,
 	Message,
@@ -75,7 +77,7 @@ sap.ui.define([
 			const sInputValue = oInput.getValue()
 			let sMessage = ""
 
-			oInput.setValueState("Error")
+			oInput.setValueState(constants.ValueState.ERROR)
 
 			if(sInputName === 'name' && sInputValue.length === 0) {
 				sMessage = "Name is Required."
@@ -97,7 +99,7 @@ sap.ui.define([
 			} else {
 				this._removeMessage(sInputName)
 				sMessage = ""
-				oInput.setValueState("None")
+				oInput.setValueState(constants.ValueState.NONE)
 				return true
 			}
 		},

@@ -4,7 +4,7 @@
  controllerName="project1.controller.ProductDetails"
  xmlns:mvc="sap.ui.core.mvc"
  xmlns="sap.m">
-    <uxap:ObjectPageLayout 
+    <uxap:ObjectPageLayout
      id="idObjectPageLayout" 
      showEditHeaderButton="true" 
      showFooter="{= ${viewStateModel>/editable}}">
@@ -27,8 +27,8 @@
                 </uxap:snappedContent> 
 
                 <uxap:actions>
-                    <Button text="Edit" press="onEditButtonPress"></Button>
-                    <Button text="Delete" type="Reject" press="onDeleteButtonPress"></Button>
+                    <Button text="{i18n>buttonEdit}" press="onEditButtonPress"></Button>
+                    <Button text="{i18n>buttonDelete}" type="Reject" press="onDeleteButtonPress"></Button>
                 </uxap:actions>       
             </uxap:ObjectPageDynamicHeaderTitle>
         </uxap:headerTitle>
@@ -36,9 +36,9 @@
         <uxap:headerContent>
             <HBox >
                 <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                    <Title text="Release Information"></Title>
+                    <Title text="{i18n>facetReleaseInformation}"></Title>
                     <ObjectStatus 
-                    title="Total Time" 
+                    title="{i18n>facetTitleTotal}" 
                     text="{
                         path: 'productsModel>releaseDate',
                         formatter: '.formatter.displayTotalDays'
@@ -49,7 +49,7 @@
                         path: 'productsModel>discountDate',
                         formatter: '.formatter.displaySaleWithState'
                     }" 
-                    text="SALE"
+                    text="{i18n>facetTitleSale}"
                     class="sapMObjectStatusLarge">
                     </ObjectStatus>
 
@@ -58,16 +58,16 @@
                         path: 'productsModel>releaseDate',
                         formatter: '.formatter.displayLabelNew'
                     }"
-                    text="New">
+                    text="{i18n>facetTitleNew}">
                     </tnt:InfoLabel>
                 </VBox>
 
                 <VBox>
-                    <Title text="Price"/>
+                    <Title text="{i18n>facetTitlePrice}"/>
 
                     <ObjectNumber 
                      number="{productsModel>price}"
-                     unit="USD"
+                     unit="{i18n>facetPriceCurrency}"
                      state="Success"
                      class="sapMObjectNumberLarge">
                     </ObjectNumber>
@@ -76,7 +76,7 @@
         </uxap:headerContent>
 
         <uxap:sections>
-            <uxap:ObjectPageSection id="idProductDetailSection" title="Product Details">
+            <uxap:ObjectPageSection id="idProductDetailSection" title="{i18n>productDetailsSection}">
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection >
                         <uxap:blocks>
@@ -86,7 +86,7 @@
                 </uxap:subSections>
             </uxap:ObjectPageSection>
             
-            <uxap:ObjectPageSection id="idProductSuppliersSection" title="Suppliers">
+            <uxap:ObjectPageSection id="idProductSuppliersSection" title="{i18n>productSuppliersSection}">
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection >
                          <uxap:blocks>
@@ -96,7 +96,7 @@
                 </uxap:subSections>
             </uxap:ObjectPageSection>
 
-            <uxap:ObjectPageSection id="idProductCommentsSection" title="Comments">
+            <uxap:ObjectPageSection id="idProductCommentsSection" title="{i18n>productCommentsSection}">
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection >
                          <uxap:blocks>
@@ -117,8 +117,8 @@
                      press="onMessagePopoverPress"/>
                 </contentLeft>
                 <contentRight>
-                    <Button enabled="{= ${message>/}.length === 0}" text="Save" press="onSaveButtonPress"/>
-                    <Button text="Cancel" type="Reject" press="onCancelButtonPress"/>
+                    <Button enabled="{= ${message>/}.length === 0}" text="{i18n>buttonSave}" press="onSaveButtonPress"/>
+                    <Button text="{i18n>buttonCancel}" type="Reject" press="onCancelButtonPress"/>
                 </contentRight>
             </Bar>
         </uxap:footer>
