@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/ui/model/Sorter"
+    "sap/ui/model/Sorter",
 ], function(
 	JSONModel,
 	Filter,
@@ -165,6 +165,39 @@ sap.ui.define([
                 })
             }
             return new Sorter(sProperty, bDescending)
+        },
+
+        /**
+         * Fetches country names from the API.
+         * @returns {Array}
+         */
+        getCountriesSuggestions: async function() {
+            try {
+                return await fetch("/api/all?fields=name")
+                .then(resp => resp.json())
+                .then(aData => {
+                    const aFilteredArray = aData.map(oItem => oItem.name.common)
+                    return aFilteredArray
+                })
+            } catch (err) {
+                console.error(err)
+            }
+        },
+        /**
+         * Fetche the Capital of the country from the API.
+         * @param {string} sCountryName 
+         * @returns {string} name of capital
+         */
+        getCitySuggestion: async function(sCountryName) {
+            try {
+                return await fetch(`/api/name/${sCountryName.toLowerCase()}?fields=capital`)
+                .then(resp => resp.json())
+                .then(aData => {
+                    return aData[0].capital[0]
+                })
+            } catch (err) {
+                console.error(err)
+            }
         }
     }
 });

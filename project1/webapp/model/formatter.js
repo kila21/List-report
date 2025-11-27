@@ -68,6 +68,24 @@ sap.ui.define([
                 return 'First Day'
             }
             return iDiffDays + ' Days'
-        }
+        },
+
+        /**
+         * Enables Control Depending on value.(for input inside suppliers)
+         * @param {boolean} value 
+         * @returns {boolean}
+         */
+        enableControl : function(value) {
+			return !!value;
+		},
+
+        /**
+         * Disables Control Depending on value.(for input inside suppliers)
+         * @param {boolean} value 
+         * @returns {boolean}
+         */
+		disableControl : function(value) {
+			return !value;
+		},
 	};
 });

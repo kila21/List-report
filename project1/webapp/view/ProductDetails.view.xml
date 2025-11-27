@@ -1,6 +1,7 @@
 <mvc:View
  xmlns:tnt="sap.tnt" 
- xmlns:uxap="sap.uxap" 
+ xmlns:uxap="sap.uxap"
+ xmlns:core="sap.ui.core"
  controllerName="project1.controller.ProductDetails"
  xmlns:mvc="sap.ui.core.mvc"
  xmlns="sap.m">
@@ -90,7 +91,7 @@
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection >
                          <uxap:blocks>
-                            <mvc:XMLView viewName="project1.view.sections.SuppliersSection"></mvc:XMLView>
+                            <core:Fragment fragmentName="project1.view.sections.SuppliersSection"/> 
                         </uxap:blocks>
                     </uxap:ObjectPageSubSection>
                 </uxap:subSections>
