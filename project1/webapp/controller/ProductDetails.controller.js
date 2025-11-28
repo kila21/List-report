@@ -154,7 +154,7 @@ sap.ui.define([
          * @returns {void}
          */
 		onSuppliersCreateButtonPress: function() {
-			const aSuppliers = this.getModel("suppliersModel").getData().suppliers
+			const aSuppliers = this.getModel("suppliersModel").getProperty("/suppliers")
 
 			const oEmptyFormData = {
                 id: this._generateSupplierID(),
@@ -168,7 +168,7 @@ sap.ui.define([
 			}
 
 			aSuppliers.unshift(oEmptyFormData)
-			this.getModel("suppliersModel").setProperty("/suppliers", aSuppliers)
+			this.getModel("suppliersModel").setProperty("/suppliers", [...aSuppliers])
 		},
 
         /**
@@ -239,10 +239,8 @@ sap.ui.define([
 
             if (!(this._sID === 'new')) {
                 sPath = this.getView().getBindingContext("productsModel").getPath()
-                oData = oModel.getProperty(sPath)
             }
-            
-            
+
             const aDetailsCategories = [...oDetailsFormModelData.categories]
             const aUpdatedSuppliers = aSuppliers.map(oSup => {
                 delete oSup.saveNew
@@ -254,15 +252,18 @@ sap.ui.define([
             })
 
             // update
-            oData.suppliers = aUpdatedSuppliers
-            oData.categories = aUpdatedCategories
-            oData.comments = aComments
-            oData.name = oDetailsFormModelData.name
-            oData.description = oDetailsFormModelData.description
-            oData.rating = Number(oDetailsFormModelData.rating)
-            oData.releaseDate = oDetailsFormModelData.releaseDate
-            oData.discountDate = oDetailsFormModelData.discountDate
-            oData.price = Number(oDetailsFormModelData.price)
+            oData = {
+                id: this._sID,
+                name : oDetailsFormModelData.name,
+                description : oDetailsFormModelData.description,
+                rating : Number(oDetailsFormModelData.rating),
+                price : Number(oDetailsFormModelData.price),
+                releaseDate : oDetailsFormModelData.releaseDate,
+                discountDate : oDetailsFormModelData.discountDate,
+                categories: [...aUpdatedCategories],
+                suppliers: [...aUpdatedSuppliers],
+                comments : aComments
+            }
             
             oSuppliers.setProperty("/suppliers", aUpdatedSuppliers)
             
@@ -293,7 +294,7 @@ sap.ui.define([
             const oSuppliersModel = this.getModel("suppliersModel")
             const oProductsModel = this.getModel("productsModel")
             const oCommentsModel = this.getModel("commentsModel")
-
+            
             const oCurrentProduct = oProductsModel
                 .getProperty("/products")
                 .filter(oItem => oItem.id === this._sID)[0]
@@ -301,7 +302,7 @@ sap.ui.define([
             const aOriginalCategoriesID = oCurrentProduct.categories.map(oItem => oItem.id)
             const aOriginalSuppliers = oCurrentProduct.suppliers
             const aOriginalComments = oCurrentProduct.comments
-
+            
             if (oCurrentProduct) {
                 const oDetailsModel = new JSONModel({
                     name: oCurrentProduct.name,
