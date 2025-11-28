@@ -81,7 +81,7 @@
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection >
                         <uxap:blocks>
-                            <mvc:XMLView viewName="project1.view.sections.ProductDetailsSection"></mvc:XMLView>
+                            <core:Fragment fragmentName="project1.view.sections.ProductDetailsSection"></core:Fragment>
                         </uxap:blocks>
                     </uxap:ObjectPageSubSection>
                 </uxap:subSections>

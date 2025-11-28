@@ -1,19 +1,14 @@
-<mvc:View 
-	xmlns:form="sap.ui.layout.form"
-	controllerName="project1.controller.sections.ProductDetailsSection"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m"
-	xmlns:core="sap.ui.core"
-	busyIndicatorDelay="0"
-	models="{message: ${message}}">
-
+<c:FragmentDefinition
+ xmlns="sap.m"
+ xmlns:c="sap.ui.core"
+ xmlns:form="sap.ui.layout.form">
     <form:SimpleForm editable="false">
 		<form:content>
 			<Label text="{i18n>productFormNameLabel}" class="sapUiTinyMarginTop"/>
 			<Input 
 			 name="name"
 			 value="{detailsFormModel>/name}" 
-			 change="onInputChange"
+			 change="onDetailsInputChange"
 			 editable="{= ${viewStateModel>/editable}}"/>
 
 			<Label text="{i18n>productFormDescriptionLabel}"/>
@@ -21,7 +16,7 @@
 			 name="description"
 			 value="{detailsFormModel>/description}" 
 			 editable="{= ${viewStateModel>/editable}}"
-			 change="onInputChange"/>
+			 change="onDetailsInputChange"/>
 		
 			<Label text="{i18n>productFormRatingLabel}" class="sapUiTinyMarginTop"/>
 			<Input
@@ -29,21 +24,21 @@
 			 type="Number"
 			 value="{detailsFormModel>/rating}" 
 			 editable="{= ${viewStateModel>/editable}}"
-			 change="onInputChange"/>
+			 change="onDetailsInputChange"/>
 
 			<Label text="{i18n>productFormReleaseDateLabel}" class="sapUiTinyMarginTop"/>
 			<DatePicker 
 			 name="releaseDate"
 			 value="{detailsFormModel>/releaseDate}" 
 			 editable="{= ${viewStateModel>/editable}}"
-			 change="onInputChange"/>
+			 change="onDetailsInputChange"/>
 
 			<Label text="{i18n>productFormDiscountDateLabel}" class="sapUiTinyMarginTop"/>
 			<DatePicker 
 			 name="discountDate"
 			 value="{detailsFormModel>/discountDate}" 
 			 editable="{= ${viewStateModel>/editable}}"
-			 change="onInputChange"/>
+			 change="onDetailsInputChange"/>
 
 			<Label text="{i18n>productFormPriceLabel}" class="sapUiTinyMarginTop"/>
 			<Input 
@@ -51,7 +46,7 @@
 			 type="Number" 
 			 value="{detailsFormModel>/price}"
 			 editable="{= ${viewStateModel>/editable}}"
-			 change="onInputChange"/>
+			 change="onDetailsInputChange"/>
 
 			<Label text="{i18n>productFormCategoriesLabel}" class="sapUiTinyMarginTop"/>
 			<MultiComboBox 
@@ -59,12 +54,11 @@
 			 selectedKeys="{detailsFormModel>/categories}" 
 			 editable="{= ${viewStateModel>/editable}}"
 			 items="{categoriesModel>/categories}"
-			 change="onInputChange">
-				<core:Item 
+			 change="onDetailsInputChange">
+				<c:Item 
 				 key="{categoriesModel>id}"
 				 text="{categoriesModel>name}"/>
 			</MultiComboBox>
 		</form:content>
 	</form:SimpleForm>
-        
-</mvc:View>
+</c:FragmentDefinition>

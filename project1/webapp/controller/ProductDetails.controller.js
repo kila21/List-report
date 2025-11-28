@@ -37,6 +37,7 @@ sap.ui.define([
          * Find index depending on the productID and bind it to the view.
          * Create local model for Edit Mode.
          * Create model for suppliers Section.(fragment)
+         * Create model for Details section and categories dropdown.
          * Create model for Validations.
          * @private
          * @param {sap.ui.base.Event} oEvent
@@ -48,6 +49,7 @@ sap.ui.define([
             const oModel = this.getModel("productsModel")
 
             let aProducts = []
+            let oCurrentProduct = null
 
             if(oModel) {
                 aProducts = oModel.getProperty("/products")
@@ -56,15 +58,32 @@ sap.ui.define([
                     path: '/products/' + sPath,
                     model: "productsModel"
                 })
+                oCurrentProduct = aProducts[sPath]
             }
 
-			const aCurrentSuppliers = aProducts.filter(oItem => oItem.id === this._sID)[0].suppliers
+            if (oCurrentProduct) {
+                const aCurrentCategories = oCurrentProduct.categories.map(oItem => oItem.id)
+                const oProductDetailsFormModel = new JSONModel({
+                        name: oCurrentProduct.name,
+                        description: oCurrentProduct.description,
+                        rating: oCurrentProduct.rating,
+                        releaseDate: oCurrentProduct.releaseDate,
+                        discountDate: oCurrentProduct.discountDate,
+                        price: oCurrentProduct.price,
+                        categories: aCurrentCategories
+                })
+                this.setModel(oProductDetailsFormModel, "detailsFormModel")
+
+                const aCurrentSuppliers = oCurrentProduct.suppliers
+                const oSuppliersModel = new JSONModel({suppliers: [...aCurrentSuppliers]})
+			    this.setModel(oSuppliersModel, "suppliersModel")
+            }
 
             const oEditModeModel = new JSONModel({editable: false})
             this.setModel(oEditModeModel, "viewStateModel")
 
-            const oSuppliersModel = new JSONModel({suppliers: [...aCurrentSuppliers]})
-			this.setModel(oSuppliersModel, "suppliersModel")
+            const oCategories = productModel.getAllCategory(oModel)
+            this.setModel(oCategories, "categoriesModel")
 
             Messaging.removeAllMessages()
 
@@ -73,6 +92,53 @@ sap.ui.define([
             Messaging.registerObject(oView, true)
         },
 
+        /**
+		 * On input change event. Calls checkValidation method.
+		 * @param {sap.ui.base.Event} oEvent 
+		 */
+		onDetailsInputChange: function(oEvent) {
+			this._checkDetailsInputValidations(oEvent.getSource())
+		},
+
+        /**
+		 * Checks the validation of the inputs. If Valid return true.
+		 * @private
+		 * @param {object} oInput input object
+		 * @returns {boolean}
+		 */
+		_checkDetailsInputValidations: function(oInput) {
+			const sInputName = oInput.getName()
+			const sInputValue = oInput.getValue()
+			let sMessage = ""
+
+            const oDetailsModel = this.getModel("detailsFormModel")
+
+			oInput.setValueState(constants.ValueState.ERROR)
+
+			if(sInputName === 'name' && sInputValue.length === 0) {
+				sMessage = "Name is Required."
+				this._createMessage(sInputName, sMessage, oDetailsModel)
+				return false
+			} else if (sInputName === 'description' && (sInputValue.length > 50 || !sInputValue)) {
+				sMessage = "Description is Required And Max length is 50. " + "Chars: " + sInputValue.length
+				this._createMessage(sInputName, sMessage, oDetailsModel)
+				return false
+			} else if (sInputName === 'rating' && (!Number(sInputValue) || Number(sInputValue) > 5 || Number(sInputValue) < 1)) {
+				sMessage = "Choose between 1 and 5"
+				this._createMessage(sInputName, sMessage, oDetailsModel)
+			} else if (sInputName === 'price' && !Number(sInputValue) && !sInputValue) {
+				sMessage = "Price is required"
+				this._createMessage(sInputName, sMessage, oDetailsModel)
+			} else if (sInputName === 'categories' && oInput.getSelectedKeys().length === 0) {
+				sMessage = "Choose At lease one Category."
+				this._createMessage(sInputName, sMessage, oDetailsModel)
+			} else {
+				this._removeMessage(sInputName)
+				sMessage = ""
+				oInput.setValueState(constants.ValueState.NONE)
+				return true
+			}
+		},
         
         /**
          * Create Empty object and Update suppliersModel
@@ -152,17 +218,34 @@ sap.ui.define([
 
             const oModel = this.getModel("productsModel")
             const sPath = this.getView().getBindingContext("productsModel").getPath()
+            
+            const oDetailsFormModelData = this.getModel("detailsFormModel").getData()
             const oSuppliers = this.getModel("suppliersModel")
+            
+            const aDetailsCategories = [...oDetailsFormModelData.categories]
+            const aAllCategory = this.getModel("categoriesModel").getProperty("/categories")
+            const aSuppliers = oSuppliers.getProperty("/suppliers")
 
             const oData = oModel.getProperty(sPath)
-            const aSuppliers = oSuppliers.getProperty("/suppliers")
             
             const aUpdatedSuppliers = aSuppliers.map(oSup => {
                 delete oSup.saveNew
                 return oSup
+            }) 
+            
+            const aUpdatedCategories = aDetailsCategories.map(sID => {
+                return aAllCategory.find(oItem => oItem.id === sID)
             })
 
+            // update
             oData.suppliers = aUpdatedSuppliers
+            oData.categories = aUpdatedCategories
+            oData.name = oDetailsFormModelData.name
+            oData.description = oDetailsFormModelData.description
+            oData.rating = oDetailsFormModelData.rating
+            oData.releaseDate = oDetailsFormModelData.releaseDate
+            oData.discountDate = oDetailsFormModelData.discountDate
+            oData.price = oDetailsFormModelData.price
             
             oSuppliers.setProperty("/suppliers", aUpdatedSuppliers)
             oModel.setProperty(sPath, oData)
@@ -179,10 +262,25 @@ sap.ui.define([
             const oSuppliersModel = this.getModel("suppliersModel")
             const oProductsModel = this.getModel("productsModel")
 
-            const aProductsData = oProductsModel.getProperty("/products")
-            const aOriginalSuppliers = aProductsData.filter(oItem => oItem.id === this._sID)[0].suppliers
+            const oCurrentProduct = oProductsModel
+                .getProperty("/products")
+                .filter(oItem => oItem.id === this._sID)[0]
 
-            if (aOriginalSuppliers) {
+            const aOriginalCategoriesID = oCurrentProduct.categories.map(oItem => oItem.id)
+            const aOriginalSuppliers = oCurrentProduct.suppliers
+
+            if (oCurrentProduct) {
+                const oDetailsModel = new JSONModel({
+                    name: oCurrentProduct.name,
+                    description: oCurrentProduct.description,
+                    rating: oCurrentProduct.rating,
+                    releaseDate: oCurrentProduct.releaseDate,
+                    discountDate: oCurrentProduct.discountDate,
+                    price: oCurrentProduct.price,
+                    categories: aOriginalCategoriesID
+                })
+                this.setModel(oDetailsModel, "detailsFormModel")
+
                 oSuppliersModel.setProperty("/suppliers", [...aOriginalSuppliers])
             }
 
@@ -247,11 +345,12 @@ sap.ui.define([
                 return true
             }
 
+            const oModel = this.getModel("suppliersModel")
             oInput.setValueState(constants.ValueState.ERROR)
             
             if (sInputName && sInputValue.length === 0) {
                 const sMessage = `Suppliers: ${sInputName} is Required.`
-                this._createMessage(sInputName, sMessage)
+                this._createMessage(sInputName, sMessage, oModel)
                 return false
             }else {
                 this._removeMessage(sInputName)
@@ -265,13 +364,14 @@ sap.ui.define([
 		 * @private
 		 * @param {string} sInputName Name of the input
 		 * @param {string} sMessage Message to add.
+         * @param {sap.ui.model.json.JSONModel} oModel
 		 */
-		_createMessage: function(sInputName, sMessage) {
+		_createMessage: function(sInputName, sMessage, oModel) {
 			const oMessage = new Message({
 				message: sMessage,
 				type: MessageType.Error,
 				target: `/${sInputName}`,
-				processor: this.getModel("suppliersModel")
+				processor: oModel
 			});
 			Messaging.addMessages(oMessage);
 		},
