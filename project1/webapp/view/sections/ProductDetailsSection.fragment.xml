@@ -73,7 +73,7 @@
 			 selectedKeys="{detailsFormModel>/categories}" 
 			 editable="{= ${viewStateModel>/editable}}"
 			 items="{categoriesModel>/categories}"
-			 change="onDetailsInputChange">
+			 selectionChange="onDetailsInputChange">
 				<c:Item 
 				 key="{categoriesModel>id}"
 				 text="{categoriesModel>name}"/>
