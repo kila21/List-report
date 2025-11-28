@@ -15,7 +15,6 @@ sap.ui.define([
 
     return BaseController.extend("project1.controller.ProductList", {
         formatter: formatter,
-        _oDialog: null,
 
         /**
          * set productsModal to the view.

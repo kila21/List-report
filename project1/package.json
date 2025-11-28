@@ -11,7 +11,13 @@
   "devDependencies": {
     "@sap-ux/ui5-middleware-fe-mockserver": "^2.3.18",
     "@sap/ux-ui5-tooling": "1",
-    "@ui5/cli": "^4.0.16"
+    "@ui5/cli": "^4.0.16",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-coverage": "^2.2.1",
+    "karma-edge-launcher": "^0.4.2",
+    "karma-qunit": "^4.2.1",
+    "karma-ui5": "^4.1.0"
   },
   "scripts": {
     "start": "fiori run --open index.html",
@@ -23,6 +29,7 @@
     "int-test": "fiori run --open \"test/integration/opaTests.qunit.html\"",
     "start-variants-management": "fiori run --open \"/preview.html#app-preview\"",
     "unit-test": "fiori run --open \"test/unit/unitTests.qunit.html\"",
+    "test": "karma start",
     "start-mock": "fiori run --config ./ui5-mock.yaml --open \"test/flp.html#app-preview\""
   },
   "sapuxLayer": "CUSTOMER_BASE"

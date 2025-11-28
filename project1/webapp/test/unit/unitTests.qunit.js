@@ -1,8 +1,9 @@
 /* global QUnit */
+
 QUnit.config.autostart = false;
 
 sap.ui.require([
-    "unit/AllTests"
+    "project1/test/unit/AllTests"
 ], function () {
     "use strict";
 

@@ -17,7 +17,7 @@ sap.ui.define([
          */
         createProductModel: function() {
             const oProductModel = new JSONModel()
-            const sDataURL = "model/data.json"
+            const sDataURL = sap.ui.require.toUrl("project1") + "/model/data.json";
             oProductModel.loadData(sDataURL)
             return oProductModel
         },
