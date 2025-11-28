@@ -33,7 +33,13 @@
 			<DatePicker 
 			 id="idDetailsReleaseDateInput"
 			 name="releaseDate"
-			 value="{detailsFormModel>/releaseDate}" 
+			 value="{
+				path: 'detailsFormModel>/releaseDate',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					source: { pattern: 'yyyy-MM-dd' }
+				}
+			 }" 
 			 editable="{= ${viewStateModel>/editable}}"
 			 change="onDetailsInputChange"/>
 
@@ -41,7 +47,13 @@
 			<DatePicker 
 			 id="idDetailsDiscountDateInput"
 			 name="discountDate"
-			 value="{detailsFormModel>/discountDate}" 
+			 value="{
+			  	path: 'detailsFormModel>/discountDate',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					source: { pattern: 'yyyy-MM-dd' }
+				}
+			 }" 
 			 editable="{= ${viewStateModel>/editable}}"
 			 change="onDetailsInputChange"/>
 
