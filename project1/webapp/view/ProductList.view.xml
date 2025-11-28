@@ -88,7 +88,9 @@
                  selectionChange="onProductsTableSelectionChange">
                     <headerToolbar>
                         <Toolbar>
-                            <Button text="{i18n>buttonCreate}"></Button>
+                            <Button 
+                             text="{i18n>buttonCreate}"
+                             press="onCreateButtonPress"/>
                             <Button 
                              id="idDeleteButton"
                              press="onDeleteButtonPress"

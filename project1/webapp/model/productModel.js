@@ -67,6 +67,19 @@ sap.ui.define([
         },
 
         /**
+         * Create new Product
+         * @param {sap.ui.model.json.JSONModel} oModel model of products.
+         * @param {object} oPorduct new product object
+         */
+        createProduct: function(oModel, oProduct) {
+            const aProducts = oModel.getProperty("/products")
+            oProduct.id = "prod_0" + (aProducts.length + 1)
+            aProducts.unshift(oProduct)
+
+            return aProducts
+        },
+
+        /**
          * Filter products data with an id And Delete.
          * @param {sap.ui.model.json.JSONModel} oModel model of products.
          * @param {string[]} aID array of product ids.

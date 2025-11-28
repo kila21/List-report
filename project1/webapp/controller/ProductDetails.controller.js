@@ -45,50 +45,54 @@ sap.ui.define([
          */
         _onRouteMatched: function(oEvent) {
             this._fetchCountries()
-
-            this._sID = oEvent.getParameter("arguments").productID
             const oModel = this.getModel("productsModel")
-
-            let aProducts = []
-            let oCurrentProduct = null
-
-            if(oModel) {
-                aProducts = oModel.getProperty("/products")
-                const sPath = aProducts.findIndex(oItem => oItem.id === this._sID)
-                this.getView().bindElement({
-                    path: '/products/' + sPath,
-                    model: "productsModel"
-                })
-                oCurrentProduct = aProducts[sPath]
-            }
-
-            if (oCurrentProduct) {
-                const aCurrentCategories = oCurrentProduct.categories.map(oItem => oItem.id)
-                const oProductDetailsFormModel = new JSONModel({
-                        name: oCurrentProduct.name,
-                        description: oCurrentProduct.description,
-                        rating: oCurrentProduct.rating,
-                        releaseDate: oCurrentProduct.releaseDate,
-                        discountDate: oCurrentProduct.discountDate,
-                        price: oCurrentProduct.price,
-                        categories: aCurrentCategories
-                })
-                this.setModel(oProductDetailsFormModel, "detailsFormModel")
-
-                const aCurrentSuppliers = oCurrentProduct.suppliers
-                const oSuppliersModel = new JSONModel({suppliers: [...aCurrentSuppliers]})
-			    this.setModel(oSuppliersModel, "suppliersModel")
-
-                const aCurrentComments = oCurrentProduct.comments
-                const oCommentsModel = new JSONModel({comments: [...aCurrentComments]})
-                this.setModel(oCommentsModel, "commentsModel")
-            }
 
             const oEditModeModel = new JSONModel({editable: false})
             this.setModel(oEditModeModel, "viewStateModel")
 
             const oCategories = productModel.getAllCategory(oModel)
             this.setModel(oCategories, "categoriesModel")
+
+            this._sID = oEvent.getParameter("arguments").productID
+
+            if (this._sID === 'new') {
+                this._clearUI()
+            } else {
+                let aProducts = []
+                let oCurrentProduct = null
+    
+                if(oModel) {
+                    aProducts = oModel.getProperty("/products")
+                    const sPath = aProducts.findIndex(oItem => oItem.id === this._sID)
+                    this.getView().bindElement({
+                        path: '/products/' + sPath,
+                        model: "productsModel"
+                    })
+                    oCurrentProduct = aProducts[sPath]
+                }
+    
+                if (oCurrentProduct) {
+                    const aCurrentCategories = oCurrentProduct.categories.map(oItem => oItem.id)
+                    const oProductDetailsFormModel = new JSONModel({
+                            name: oCurrentProduct.name,
+                            description: oCurrentProduct.description,
+                            rating: oCurrentProduct.rating,
+                            releaseDate: oCurrentProduct.releaseDate,
+                            discountDate: oCurrentProduct.discountDate,
+                            price: oCurrentProduct.price,
+                            categories: aCurrentCategories
+                    })
+                    this.setModel(oProductDetailsFormModel, "detailsFormModel")
+    
+                    const aCurrentSuppliers = oCurrentProduct.suppliers
+                    const oSuppliersModel = new JSONModel({suppliers: [...aCurrentSuppliers]})
+                    this.setModel(oSuppliersModel, "suppliersModel")
+    
+                    const aCurrentComments = oCurrentProduct.comments
+                    const oCommentsModel = new JSONModel({comments: [...aCurrentComments]})
+                    this.setModel(oCommentsModel, "commentsModel")
+                }
+            }
 
             Messaging.removeAllMessages()
 
@@ -208,29 +212,36 @@ sap.ui.define([
          */
         onSaveButtonPress: function() {
             let bValid = false
-            const aSuppliersID = this._getSuppliersInput()
+            let oData = {}
+            let sPath = null
+            const oModel = this.getModel("productsModel")
 
+            const aSuppliersID = this._getSuppliersInput()
             const aValids = aSuppliersID.filter(oInput => !this._onSuppliersInputValidation(oInput))
-            
-            if (aValids.length === 0) {
+            const aDetailsValid = this._getDetailsInput().filter(oInput => !this._checkDetailsInputValidations(oInput))
+
+            if (aValids.length === 0 && aDetailsValid.length === 0) {
                 bValid = true
             }
-
+            
             if (!bValid) {
                 MessageToast.show("Fix Errors.")
                 return 
             }
-
-            const oModel = this.getModel("productsModel")
-            const oSuppliers = this.getModel("suppliersModel")
             
+            const oSuppliers = this.getModel("suppliersModel")
+            const aSuppliers = oSuppliers.getProperty("/suppliers")
+    
             const oDetailsFormModelData = this.getModel("detailsFormModel").getData()
             const aAllCategory = this.getModel("categoriesModel").getProperty("/categories")
-            const aSuppliers = oSuppliers.getProperty("/suppliers")
+
             const aComments = this.getModel("commentsModel").getProperty("/comments")
+
+            if (!(this._sID === 'new')) {
+                sPath = this.getView().getBindingContext("productsModel").getPath()
+                oData = oModel.getProperty(sPath)
+            }
             
-            const sPath = this.getView().getBindingContext("productsModel").getPath()
-            const oData = oModel.getProperty(sPath)
             
             const aDetailsCategories = [...oDetailsFormModelData.categories]
             const aUpdatedSuppliers = aSuppliers.map(oSup => {
@@ -245,16 +256,24 @@ sap.ui.define([
             // update
             oData.suppliers = aUpdatedSuppliers
             oData.categories = aUpdatedCategories
+            oData.comments = aComments
             oData.name = oDetailsFormModelData.name
             oData.description = oDetailsFormModelData.description
-            oData.rating = oDetailsFormModelData.rating
+            oData.rating = Number(oDetailsFormModelData.rating)
             oData.releaseDate = oDetailsFormModelData.releaseDate
             oData.discountDate = oDetailsFormModelData.discountDate
-            oData.price = oDetailsFormModelData.price
-            oData.comments = aComments
+            oData.price = Number(oDetailsFormModelData.price)
             
             oSuppliers.setProperty("/suppliers", aUpdatedSuppliers)
-            oModel.setProperty(sPath, oData)
+            
+            if (this._sID === 'new') {
+                const aUpdatedProducts = productModel.createProduct(oModel, oData)
+                const sNewProductID = aUpdatedProducts[0].id
+                oModel.setProperty("/products", aUpdatedProducts)
+                this.navTo("RouteProductDetails", {productID: sNewProductID}, true)
+            } else {
+                oModel.setProperty(sPath, oData)
+            }
 
             this.byId("idFeedInput").setValue(null)
             this.getModel("viewStateModel").setProperty("/editable", false)
@@ -266,6 +285,11 @@ sap.ui.define([
          * @returns {void}
          */
         onCancelButtonPress: function() {
+            if (this._sID === 'new' ) {
+                this.navTo("RouteProductList", {}, true)
+                return
+            }
+
             const oSuppliersModel = this.getModel("suppliersModel")
             const oProductsModel = this.getModel("productsModel")
             const oCommentsModel = this.getModel("commentsModel")
@@ -312,7 +336,7 @@ sap.ui.define([
 
             if (aUpdatedArray) {
                 oModel.setProperty("/products", aUpdatedArray)
-                this.navTo("RouteProductList")
+                this.navTo("RouteProductList", {}, true)
             }
         },
 
@@ -464,6 +488,22 @@ sap.ui.define([
         },
 
         /**
+         * Get all Detail Section input.
+         */
+        _getDetailsInput: function() {
+            const aInputs = [
+                this.byId("idDetailsNameInput"),
+                this.byId("idDetailsDescriptionInput"),
+                this.byId("idDetailsRatingInput"),
+                this.byId("idDetailsReleaseDateInput"),
+                this.byId("idDetailsDiscountDateInput"),
+                this.byId("idDetailsPriceInput"),
+                this.byId("idDetailsCategoriesInput")
+            ]
+            return aInputs
+        },
+
+        /**
          * Create id for new supplier.
          * @returns {string}
          */
@@ -473,5 +513,28 @@ sap.ui.define([
             
             return `sup_00${aSupps.length + 1}`
         },
+
+        /**
+         * When route dynamic id is 'new', clears the ui set local models to empty values.
+         * @returns {void}
+         */
+        _clearUI: function() {
+            this.getView().unbindElement("productsModel");
+            this.getModel("viewStateModel").setProperty("/editable", true)
+
+            const oDetailsEmpty = {
+                name: "",
+                description: "",
+                rating: null,
+                releaseDate: "",
+                discountDate: "",
+                price: null,
+                categories: []
+            }
+
+            this.setModel(new JSONModel(oDetailsEmpty), "detailsFormModel")
+            this.setModel(new JSONModel({suppliers: []}), "suppliersModel")
+            this.setModel(new JSONModel({comments: []}), "commentsModel")
+        }
     });
 })

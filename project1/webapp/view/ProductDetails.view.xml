@@ -12,19 +12,19 @@
         <uxap:headerTitle>
             <uxap:ObjectPageDynamicHeaderTitle >
                 <uxap:expandedHeading>
-                    <Title text="{productsModel>name}"></Title>
+                    <Title text="{detailsFormModel>/name}"></Title>
                 </uxap:expandedHeading>
 
                 <uxap:snappedHeading>
-                    <Title text="{productsModel>name}"/>
+                    <Title text="{detailsFormModel>/name}"/>
                 </uxap:snappedHeading>
 
                 <uxap:expandedContent>
-                    <Text text="{productsModel>description}"/>
+                    <Text text="{detailsFormModel>/description}"/>
                 </uxap:expandedContent>
 
                 <uxap:snappedContent>
-                    <Text text="{productsModel>description}"/>
+                    <Text text="{detailsFormModel>/description}"/>
                 </uxap:snappedContent> 
 
                 <uxap:actions>
@@ -41,13 +41,13 @@
                     <ObjectStatus 
                     title="{i18n>facetTitleTotal}" 
                     text="{
-                        path: 'productsModel>releaseDate',
+                        path: 'detailsFormModel>/releaseDate',
                         formatter: '.formatter.displayTotalDays'
                     }">
                     </ObjectStatus>
 
                     <ObjectStatus state="{
-                        path: 'productsModel>discountDate',
+                        path: 'detailsFormModel>/discountDate',
                         formatter: '.formatter.displaySaleWithState'
                     }" 
                     text="{i18n>facetTitleSale}"
@@ -56,7 +56,7 @@
 
                     <tnt:InfoLabel
                     visible="{
-                        path: 'productsModel>releaseDate',
+                        path: 'detailsFormModel>/releaseDate',
                         formatter: '.formatter.displayLabelNew'
                     }"
                     text="{i18n>facetTitleNew}">
@@ -67,7 +67,7 @@
                     <Title text="{i18n>facetTitlePrice}"/>
 
                     <ObjectNumber 
-                     number="{productsModel>price}"
+                     number="{detailsFormModel>/price}"
                      unit="{i18n>facetPriceCurrency}"
                      state="Success"
                      class="sapMObjectNumberLarge">

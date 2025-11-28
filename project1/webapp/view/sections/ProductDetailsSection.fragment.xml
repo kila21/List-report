@@ -6,6 +6,7 @@
 		<form:content>
 			<Label text="{i18n>productFormNameLabel}" class="sapUiTinyMarginTop"/>
 			<Input 
+			 id="idDetailsNameInput"
 			 name="name"
 			 value="{detailsFormModel>/name}" 
 			 change="onDetailsInputChange"
@@ -13,6 +14,7 @@
 
 			<Label text="{i18n>productFormDescriptionLabel}"/>
 			<Input 
+			 id="idDetailsDescriptionInput"
 			 name="description"
 			 value="{detailsFormModel>/description}" 
 			 editable="{= ${viewStateModel>/editable}}"
@@ -20,6 +22,7 @@
 		
 			<Label text="{i18n>productFormRatingLabel}" class="sapUiTinyMarginTop"/>
 			<Input
+			 id="idDetailsRatingInput"
 			 name="rating"
 			 type="Number"
 			 value="{detailsFormModel>/rating}" 
@@ -28,6 +31,7 @@
 
 			<Label text="{i18n>productFormReleaseDateLabel}" class="sapUiTinyMarginTop"/>
 			<DatePicker 
+			 id="idDetailsReleaseDateInput"
 			 name="releaseDate"
 			 value="{detailsFormModel>/releaseDate}" 
 			 editable="{= ${viewStateModel>/editable}}"
@@ -35,6 +39,7 @@
 
 			<Label text="{i18n>productFormDiscountDateLabel}" class="sapUiTinyMarginTop"/>
 			<DatePicker 
+			 id="idDetailsDiscountDateInput"
 			 name="discountDate"
 			 value="{detailsFormModel>/discountDate}" 
 			 editable="{= ${viewStateModel>/editable}}"
@@ -42,6 +47,7 @@
 
 			<Label text="{i18n>productFormPriceLabel}" class="sapUiTinyMarginTop"/>
 			<Input 
+			 id="idDetailsPriceInput"
 			 name="price"
 			 type="Number" 
 			 value="{detailsFormModel>/price}"
@@ -50,6 +56,7 @@
 
 			<Label text="{i18n>productFormCategoriesLabel}" class="sapUiTinyMarginTop"/>
 			<MultiComboBox 
+			 id="idDetailsCategoriesInput"
 			 name="categories"
 			 selectedKeys="{detailsFormModel>/categories}" 
 			 editable="{= ${viewStateModel>/editable}}"

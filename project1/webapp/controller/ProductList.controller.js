@@ -166,6 +166,14 @@ sap.ui.define([
         },
 
         /**
+         * on Create new product. Navigate To object page.
+         * 
+         */
+        onCreateButtonPress: function() {
+            this.navTo("RouteProductDetails", {productID: 'new'})
+        },
+
+        /**
          * Finds out If there is selected items in table and call function to ask user about delete.
          * @param {sap.ui.base.Event} oEvent press event on button
          */
