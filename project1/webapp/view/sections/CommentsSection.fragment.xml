@@ -1,0 +1,23 @@
+<c:FragmentDefinition
+ xmlns="sap.m"
+ xmlns:c="sap.ui.core"
+ xmlns:l="sap.ui.layout">
+    <l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+            <FeedInput
+				id="idFeedInput"
+                visible="{= ${viewStateModel>/editable}}"
+                placeholder="{i18n>FeedInputPlaceHolder}"
+                post="onFeedInputPost"/>
+			<List
+				items="{commentsModel>/comments}" >
+				<FeedListItem
+					icon="sap-icon://customer"
+                    info="{commentsModel>comment}">
+				</FeedListItem>
+			</List>
+		</l:content>
+	</l:VerticalLayout>
+</c:FragmentDefinition>

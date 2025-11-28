@@ -101,7 +101,7 @@
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection >
                          <uxap:blocks>
-                            <mvc:XMLView viewName="project1.view.sections.CommentsSection"></mvc:XMLView>
+                            <core:Fragment fragmentName="project1.view.sections.CommentsSection"/>
                         </uxap:blocks>
                     </uxap:ObjectPageSubSection>
                 </uxap:subSections>

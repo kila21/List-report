@@ -38,6 +38,7 @@ sap.ui.define([
          * Create local model for Edit Mode.
          * Create model for suppliers Section.(fragment)
          * Create model for Details section and categories dropdown.
+         * Create model for Comments Section.
          * Create model for Validations.
          * @private
          * @param {sap.ui.base.Event} oEvent
@@ -77,6 +78,10 @@ sap.ui.define([
                 const aCurrentSuppliers = oCurrentProduct.suppliers
                 const oSuppliersModel = new JSONModel({suppliers: [...aCurrentSuppliers]})
 			    this.setModel(oSuppliersModel, "suppliersModel")
+
+                const aCurrentComments = oCurrentProduct.comments
+                const oCommentsModel = new JSONModel({comments: [...aCurrentComments]})
+                this.setModel(oCommentsModel, "commentsModel")
             }
 
             const oEditModeModel = new JSONModel({editable: false})
@@ -217,22 +222,22 @@ sap.ui.define([
             }
 
             const oModel = this.getModel("productsModel")
-            const sPath = this.getView().getBindingContext("productsModel").getPath()
-            
-            const oDetailsFormModelData = this.getModel("detailsFormModel").getData()
             const oSuppliers = this.getModel("suppliersModel")
             
-            const aDetailsCategories = [...oDetailsFormModelData.categories]
+            const oDetailsFormModelData = this.getModel("detailsFormModel").getData()
             const aAllCategory = this.getModel("categoriesModel").getProperty("/categories")
             const aSuppliers = oSuppliers.getProperty("/suppliers")
-
+            const aComments = this.getModel("commentsModel").getProperty("/comments")
+            
+            const sPath = this.getView().getBindingContext("productsModel").getPath()
             const oData = oModel.getProperty(sPath)
             
+            const aDetailsCategories = [...oDetailsFormModelData.categories]
             const aUpdatedSuppliers = aSuppliers.map(oSup => {
                 delete oSup.saveNew
                 return oSup
             }) 
-            
+
             const aUpdatedCategories = aDetailsCategories.map(sID => {
                 return aAllCategory.find(oItem => oItem.id === sID)
             })
@@ -246,11 +251,13 @@ sap.ui.define([
             oData.releaseDate = oDetailsFormModelData.releaseDate
             oData.discountDate = oDetailsFormModelData.discountDate
             oData.price = oDetailsFormModelData.price
+            oData.comments = aComments
             
             oSuppliers.setProperty("/suppliers", aUpdatedSuppliers)
             oModel.setProperty(sPath, oData)
-            this.getModel("viewStateModel").setProperty("/editable", false)
 
+            this.byId("idFeedInput").setValue(null)
+            this.getModel("viewStateModel").setProperty("/editable", false)
             MessageToast.show("Product Details Saved Successfully.")
         },
 
@@ -261,6 +268,7 @@ sap.ui.define([
         onCancelButtonPress: function() {
             const oSuppliersModel = this.getModel("suppliersModel")
             const oProductsModel = this.getModel("productsModel")
+            const oCommentsModel = this.getModel("commentsModel")
 
             const oCurrentProduct = oProductsModel
                 .getProperty("/products")
@@ -268,6 +276,7 @@ sap.ui.define([
 
             const aOriginalCategoriesID = oCurrentProduct.categories.map(oItem => oItem.id)
             const aOriginalSuppliers = oCurrentProduct.suppliers
+            const aOriginalComments = oCurrentProduct.comments
 
             if (oCurrentProduct) {
                 const oDetailsModel = new JSONModel({
@@ -282,6 +291,8 @@ sap.ui.define([
                 this.setModel(oDetailsModel, "detailsFormModel")
 
                 oSuppliersModel.setProperty("/suppliers", [...aOriginalSuppliers])
+                oCommentsModel.setProperty("/comments", [...aOriginalComments])
+                this.byId("idFeedInput").setValue(null)
             }
 
             Messaging.removeAllMessages()
@@ -318,6 +329,28 @@ sap.ui.define([
             const aUpdatedSuppliers = aSuppliersModel.filter(oItem => oItem.id !== oPressedSupplier.id)
             
             oSuppliersModel.setProperty("/suppliers", [...aUpdatedSuppliers])
+        },
+
+        /**
+         * @param {sap.ui.base.Event} oEvent
+         */
+        onFeedInputPost: function(oEvent) {
+            const oCommentsModel = this.getModel("commentsModel")
+            const aComments = oCommentsModel.getProperty("/comments")
+
+            const sComment = oEvent.getParameter("value")
+
+            if (!sComment) {
+                MessageToast.show("Please Add a Comment!")
+                return
+            }
+
+            aComments.unshift({
+                id: "com__00" + aComments.length,
+                comment: sComment
+            })
+
+            oCommentsModel.setProperty("/comments", aComments)
         },
 
         /**
