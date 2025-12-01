@@ -1,10 +1,15 @@
 <c:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:c="sap.ui.core">
-      <Table items="{suppliersModel>/suppliers}" id="idSuppliersTable">
+      <Table 
+	   items="{suppliersModel>/suppliers}" 
+	   id="idSuppliersTable" 
+	   mode="{= ${viewStateModel>/editable} ? 'Delete' : 'None'}" 
+	   delete="onSupplierDeleteButtonPress">
 	   		<headerToolbar>
 				<Toolbar enabled="{= ${viewStateModel>/editable}}">
 					<content>
+						<ToolbarSpacer />
 						<Button 
 						 enabled="{= !${suppliersModel>/suppliers/0/saveNew}}"
 						 text="{i18n>buttonCreate}" 
@@ -37,11 +42,6 @@
 				<Column >
 					<Text text="{i18n>suppliersTableZipCode}"></Text>
 				</Column>
-
-				<Column visible="{= ${viewStateModel>/editable}}">
-                        <Text text="{i18n>suppliersTableAction}"></Text>
-				</Column>
-
 		   </columns>
 
 		   <ColumnListItem >
@@ -76,7 +76,7 @@
                      value="{suppliersModel>country}"
                      change="onSuppliersInputChange">
 						<suggestionItems>
-							<SuggestionItem text="{countriesModel>}" key="{countriesModel>}"></SuggestionItem>
+							<SuggestionItem text="{countriesModel>}" key="{countriesModel>}"/>
 						</suggestionItems>
 					</Input>
 				</HBox>
@@ -89,10 +89,20 @@
 					 id="idCitySupplierInput"
 					 fieldGroupIds="supplierInputs"
                      name="city"
-					 editable="false"
                      value="{suppliersModel>city}" 
                      visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.enableControl'}"
+					 showSuggestion="true"
+					 startSuggestion="0"
+					 suggestionItems="{
+					 	path: 'capitalModel>/capital',
+						templateShareable: true
+					 }"
                      change="onSuppliersInputChange">
+					 	<suggestionItems>
+							<SuggestionItem 
+							 text="{capitalModel>}"
+							 key="{capitalModel>}"/>
+						</suggestionItems>
 					</Input>
 				</HBox>
 
@@ -136,11 +146,6 @@
                      change="onSuppliersInputChange"
 					 valueLiveUpdate="true"/>
 				</HBox>
-
-                <Button 
-				 visible="{= ${viewStateModel>/editable} &amp;&amp; !${suppliersModel>saveNew}}" 
-				 text="Delete" 
-				 press="onSupplierDeleteButtonPress"/>
 		   </ColumnListItem>
 	   </Table>
 

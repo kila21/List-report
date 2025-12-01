@@ -87,8 +87,9 @@
                  itemPress="onProductsTableItemPress"
                  selectionChange="onProductsTableSelectionChange">
                     <headerToolbar>
-                        <Toolbar>
-                            <Button 
+                        <OverflowToolbar >
+                            <ToolbarSpacer />
+                            <Button
                              text="{i18n>buttonCreate}"
                              press="onCreateButtonPress"/>
                             <Button 
@@ -96,9 +97,8 @@
                              press="onDeleteButtonPress"
                              text="{i18n>buttonDelete}" 
                              enabled="{deleteButtonModel>/deleteEnabled}" 
-                             type="Reject">
-                            </Button>
-                        </Toolbar>
+                             type="Reject"/>
+                        </OverflowToolbar>
                     </headerToolbar>
                     <columns>
                         <Column>
@@ -220,16 +220,5 @@
                 </Table>
             </f:content>
         </f:DynamicPage>
-
-        <MessagePopover id="idConfirmationMessagePopover">
-            <headerButton>
-                <Button icon="sap-icon://close"></Button>
-            </headerButton>
-            <items>
-                <MessageItem id="idMessageItem" title="{i18n>deleteDialogTitle}" type="Warning">
-                    <Link text="{i18n>buttonYes}" emphasized="true" press="onLinkDeletionPress"></Link>
-                </MessageItem>
-            </items>
-        </MessagePopover>
     </Page>
 </mvc:View>

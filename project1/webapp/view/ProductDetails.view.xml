@@ -12,11 +12,11 @@
         <uxap:headerTitle>
             <uxap:ObjectPageDynamicHeaderTitle >
                 <uxap:expandedHeading>
-                    <Title text="{detailsFormModel>/name}"></Title>
+                    <Title text="{= ${detailsFormModel>/name} || ${i18n>DetailTitlePlaceholder}}"></Title>
                 </uxap:expandedHeading>
 
                 <uxap:snappedHeading>
-                    <Title text="{detailsFormModel>/name}"/>
+                    <Title text="{= ${detailsFormModel>/name} || ${i18n>DetailTitlePlaceholder}}"/>
                 </uxap:snappedHeading>
 
                 <uxap:expandedContent>
@@ -28,8 +28,15 @@
                 </uxap:snappedContent> 
 
                 <uxap:actions>
-                    <Button text="{i18n>buttonEdit}" press="onEditButtonPress"></Button>
-                    <Button text="{i18n>buttonDelete}" type="Reject" press="onDeleteButtonPress"></Button>
+                    <Button 
+                     text="{i18n>buttonEdit}" 
+                     enabled="{= !${viewStateModel>/editable}}"
+                     press="onEditButtonPress"/>
+                    <Button 
+                     visible="{= !!${productsModel>id}}"
+                     text="{i18n>buttonDelete}" 
+                     type="Reject" 
+                     press="onDeleteButtonPress" />
                 </uxap:actions>       
             </uxap:ObjectPageDynamicHeaderTitle>
         </uxap:headerTitle>
@@ -37,14 +44,14 @@
         <uxap:headerContent>
             <HBox >
                 <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                    <Title text="{i18n>facetReleaseInformation}"></Title>
+                    <Title 
+                     text="{i18n>facetReleaseInformation}"/>
                     <ObjectStatus 
                     title="{i18n>facetTitleTotal}" 
                     text="{
                         path: 'detailsFormModel>/releaseDate',
                         formatter: '.formatter.displayTotalDays'
-                    }">
-                    </ObjectStatus>
+                    }" />
 
                     <ObjectStatus state="{
                         path: 'detailsFormModel>/discountDate',
@@ -55,8 +62,7 @@
                         formatter: '.formatter.displaySaleWithState'
                     }" 
                     text="{i18n>facetTitleSale}"
-                    class="sapMObjectStatusLarge">
-                    </ObjectStatus>
+                    class="sapMObjectStatusLarge"/>
 
                     <tnt:InfoLabel
                      visible="{

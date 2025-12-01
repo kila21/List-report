@@ -3,13 +3,15 @@ sap.ui.define([
     "project1/model/constants",
     "project1/model/productModel",
     "project1/model/formatter",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+    "sap/m/MessageBox"
 ], (
     BaseController,
 	constants,
 	productModel,
 	formatter,
-	JSONModel
+	JSONModel,
+	MessageBox,
 ) => {
     "use strict";
 
@@ -23,7 +25,6 @@ sap.ui.define([
         onInit() {
             this.getRouter().getRoute("RouteProductList").attachPatternMatched(this._onRouteMatched, this)
         },
-
 
         /**
          * Set categories and Suppliers Model.(filter options)
@@ -174,62 +175,53 @@ sap.ui.define([
         },
 
         /**
-         * Finds out If there is selected items in table and call function to ask user about delete.
+         * Check how many item are selected in the table and ask user for deletion with messageBox.
          * @param {sap.ui.base.Event} oEvent press event on button
          */
         onDeleteButtonPress: async function(oEvent) {
             let sProductName = ""
+            let sMessage = ""
+            const aSelectedItemsID = []
             const aSelectedItems = this._getSelectedItemsFromTable()
 
             aSelectedItems.map(oProduct => {
                 const oObject = oProduct.getBindingContext("productsModel").getObject()
                 sProductName = oObject.name
+                aSelectedItemsID.push(oObject.id)
                 return oObject
             })
-            await this._openConfirmDeleteDialog(aSelectedItems.length, oEvent.getSource(), sProductName)
-        },
 
-        /**
-         * This function set the Description depending on the arguments and opens the dialog.
-         * @private 
-         * @param {Integer} iCount length of selected items.
-         * @param {sap.m.Button} oButton
-         * @param {string} [sName] name of product item. optional parameter.
-         */
-        _openConfirmDeleteDialog: async function(iCount, oButton, sName) {
-            const oMessagePopover = this.byId("idConfirmationMessagePopover")
-            const oMessageItem = this.byId("idMessageItem")
-            let sDescription = ''
-
-            
-            if (iCount === 1 && sName) {
-                sDescription = `Do you really want to delete product ${sName}?`
+            if (aSelectedItems.length === 1) {
+                sMessage = `Do  you really want to delete the product:  ${sProductName}`
             } else {
-                sDescription = `Do you really want to delete ${iCount} products?`
+                sMessage = `Do you really want to delete ${aSelectedItems.length} products?`
             }
-            oMessageItem.setDescription(sDescription)
-            oMessagePopover.openBy(oButton)
-         
+
+            MessageBox.warning(sMessage, {
+                actions: [MessageBox.Action.YES, MessageBox.Action.CLOSE],
+                onClose: function(sAction) {
+                    if (sAction === "YES") {
+                        this._onProductsDeletion(aSelectedItemsID)
+                    }
+                }.bind(this)
+            });
         },
 
         /**
          * Delete the item and clear the UI.
+         * @private
+         * @param {Array} aSelectedItemsID
          * @returns {void}
          */
-        onLinkDeletionPress: function() {
-            const aSelectedItems = this._getSelectedItemsFromTable()
-            const aID = aSelectedItems.map(
-                oProduct => oProduct.getBindingContext("productsModel").getObject().id
-            )
+        _onProductsDeletion: function(aSelectedItemsID) {
             const oModel = this.getModel("productsModel")
-            const aUpdatedProducts = productModel.deleteProducts(oModel, aID)
+            const aUpdatedProducts = productModel.deleteProducts(oModel, aSelectedItemsID)
 
             if(aUpdatedProducts) {
                 oModel.setProperty("/products", aUpdatedProducts)
                 
                 this._clearTableSelectedItems()
                 this._setDeleteButtonEnable(false)
-                this._onButtonClosePress()
             }
         },
 
@@ -270,16 +262,6 @@ sap.ui.define([
         _clearTableSelectedItems: function() {
             const oTable = this.byId("idProductsTable")
             oTable.removeSelections(true)
-        },
-
-        /**
-         * Close the dialog.
-         * @private
-         * @returns {void}
-        */
-        _onButtonClosePress: function() {
-            const oMessagePopover = this.byId("idConfirmationMessagePopover")
-            oMessagePopover.close()
         },
 
         /**

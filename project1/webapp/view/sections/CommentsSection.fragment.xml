@@ -14,8 +14,9 @@
 			<List
 				items="{commentsModel>/comments}" >
 				<FeedListItem
+					sender="User"
 					icon="sap-icon://customer"
-                    info="{commentsModel>comment}">
+                    text="{commentsModel>comment}">
 				</FeedListItem>
 			</List>
 		</l:content>

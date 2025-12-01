@@ -346,12 +346,13 @@ sap.ui.define([
          * @param {sap.ui.base.Event} oEvent 
          */
         onSupplierDeleteButtonPress: function(oEvent) {
-            const oPressedSupplier = oEvent.getSource().getBindingContext("suppliersModel").getObject()
+            const oItem = oEvent.getParameter("listItem")
+            const sID = oItem.getBindingContext("suppliersModel").getObject().id;
             
             const oSuppliersModel = this.getModel("suppliersModel")
             const aSuppliersModel = oSuppliersModel.getProperty("/suppliers")
             
-            const aUpdatedSuppliers = aSuppliersModel.filter(oItem => oItem.id !== oPressedSupplier.id)
+            const aUpdatedSuppliers = aSuppliersModel.filter(oItem => oItem.id !== sID)
             
             oSuppliersModel.setProperty("/suppliers", [...aUpdatedSuppliers])
         },
@@ -471,7 +472,8 @@ sap.ui.define([
         _fetchCapital: async function(sCountryName) {
             const sCapital = await productModel.getCitySuggestion(sCountryName)
             if (sCapital) {
-               this.getModel("suppliersModel").setProperty("/suppliers/0/city", sCapital)
+                const oCapitalModel = new JSONModel({capital: [sCapital]})
+                this.setModel(oCapitalModel, "capitalModel")
             }
         },
 
