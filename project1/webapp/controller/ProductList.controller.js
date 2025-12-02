@@ -17,6 +17,7 @@ sap.ui.define([
 
     return BaseController.extend("project1.controller.ProductList", {
         formatter: formatter,
+        _oBundle: null,
 
         /**
          * call the attachPatterMatch method.
@@ -33,6 +34,7 @@ sap.ui.define([
          * @returns {void}
          */
         _onRouteMatched: function () {
+            this._oBundle = this.getModel("i18n").getResourceBundle()
             const oProductsModel = this.getModel("productsModel")
 
             const oCategories = productModel.getAllCategory(oProductsModel)
@@ -192,15 +194,15 @@ sap.ui.define([
             })
 
             if (aSelectedItems.length === 1) {
-                sMessage = `Do  you really want to delete the product:  ${sProductName}`
+                sMessage = this._oBundle.getText("messageForOneProduct", [sProductName])
             } else {
-                sMessage = `Do you really want to delete ${aSelectedItems.length} products?`
+                sMessage = this._oBundle.getText("messageForMultiProducts", [aSelectedItems.length])
             }
 
             MessageBox.warning(sMessage, {
                 actions: [MessageBox.Action.YES, MessageBox.Action.CLOSE],
                 onClose: function(sAction) {
-                    if (sAction === "YES") {
+                    if (sAction === constants.MessageBoxActions.Yes) {
                         this._onProductsDeletion(aSelectedItemsID)
                     }
                 }.bind(this)

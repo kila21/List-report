@@ -24,6 +24,7 @@ sap.ui.define([
     return BaseController.extend("project1.controller.ProductDetails", {
         formatter: formatter,
         _sID: "",
+        _oBundle: null,
         /**
          * On component init call attachPaterMatched.
          * @override
@@ -46,6 +47,7 @@ sap.ui.define([
         _onRouteMatched: function(oEvent) {
             this._fetchCountries()
             const oModel = this.getModel("productsModel")
+            this._oBundle = this.getModel("i18n").getResourceBundle()
 
             const oEditModeModel = new JSONModel({editable: false})
             this.setModel(oEditModeModel, "viewStateModel")
@@ -124,22 +126,22 @@ sap.ui.define([
 
 			oInput.setValueState(constants.ValueState.ERROR)
 
-			if(sInputName === 'name' && sInputValue.length === 0) {
-				sMessage = "Name is Required."
+			if(sInputName === constants.DetailsSectionInputNames.NAME && sInputValue.length === 0) {
+                sMessage = this._oBundle.getText("detailsNameValidation")
 				this._createMessage(sInputName, sMessage, oDetailsModel)
 				return false
-			} else if (sInputName === 'description' && (sInputValue.length > 50 || !sInputValue)) {
-				sMessage = "Description is Required And Max length is 50. " + "Chars: " + sInputValue.length
+			} else if (sInputName === constants.DetailsSectionInputNames.DESCRIPTION && (sInputValue.length > 50 || !sInputValue)) {
+                sMessage = this._oBundle.getText("detailsDescriptionValidation", [sInputValue.length])
 				this._createMessage(sInputName, sMessage, oDetailsModel)
 				return false
-			} else if (sInputName === 'rating' && (!Number(sInputValue) || Number(sInputValue) > 5 || Number(sInputValue) < 1)) {
-				sMessage = "Choose between 1 and 5"
+			} else if (sInputName === constants.DetailsSectionInputNames.RATING && (!Number(sInputValue) || Number(sInputValue) > 5 || Number(sInputValue) < 1)) {
+                sMessage = this._oBundle.getText("detailsRatingValidation")
 				this._createMessage(sInputName, sMessage, oDetailsModel)
-			} else if (sInputName === 'price' && !Number(sInputValue) && !sInputValue) {
-				sMessage = "Price is required"
+			} else if (sInputName === constants.DetailsSectionInputNames.PRICE && !Number(sInputValue) && !sInputValue) {
+                sMessage = this._oBundle.getText("detailsPriceValidation")
 				this._createMessage(sInputName, sMessage, oDetailsModel)
-			} else if (sInputName === 'categories' && oInput.getSelectedKeys().length === 0) {
-				sMessage = "Choose At lease one Category."
+			} else if (sInputName === constants.DetailsSectionInputNames.CATEGORY && oInput.getSelectedKeys().length === 0) {
+                sMessage = this._oBundle.getText("detailsCategoryValidation")
 				this._createMessage(sInputName, sMessage, oDetailsModel)
 			} else {
 				this._removeMessage(sInputName)
@@ -201,7 +203,7 @@ sap.ui.define([
             const bEditable = oEditModel.getProperty("/editable")
 
             if (!bEditable) oEditModel.setProperty("/editable", true)
-            else MessageToast.show("You are Already in Edit Mode. Save Changes Or Click Cancel.")
+            else MessageToast.show(this._oBundle.getText("textEditWarning"))
         },
 
         /**
@@ -225,7 +227,7 @@ sap.ui.define([
             }
             
             if (!bValid) {
-                MessageToast.show("Fix Errors.")
+                MessageToast.show(this._oBundle.getText("textFixErrors"))
                 return 
             }
             
@@ -278,7 +280,7 @@ sap.ui.define([
 
             this.byId("idFeedInput").setValue(null)
             this.getModel("viewStateModel").setProperty("/editable", false)
-            MessageToast.show("Product Details Saved Successfully.")
+            MessageToast.show(this._oBundle.getText("textProductSaveSuccessfully"))
         },
 
         /**
@@ -322,7 +324,7 @@ sap.ui.define([
 
             Messaging.removeAllMessages()
             this.getModel("viewStateModel").setProperty("/editable", false)
-            MessageToast.show("All Current Changes are canceled.")
+            MessageToast.show(this._oBundle.getText("textProductChangesCancel"))
         },
 
         /**
@@ -367,7 +369,7 @@ sap.ui.define([
             const sComment = oEvent.getParameter("value")
 
             if (!sComment) {
-                MessageToast.show("Please Add a Comment!")
+                MessageToast.show(this._oBundle.getText("textWarningForComment"))
                 return
             }
 
@@ -408,7 +410,7 @@ sap.ui.define([
             oInput.setValueState(constants.ValueState.ERROR)
             
             if (sInputName && sInputValue.length === 0) {
-                const sMessage = `Suppliers: ${sInputName} is Required.`
+                const sMessage = this._oBundle.getText("suppliersValidationMessage", [sInputName])
                 this._createMessage(sInputName, sMessage, oModel)
                 return false
             }else {
