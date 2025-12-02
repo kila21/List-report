@@ -411,10 +411,10 @@ sap.ui.define([
             
             if (sInputName && sInputValue.length === 0) {
                 const sMessage = this._oBundle.getText("suppliersValidationMessage", [sInputName])
-                this._createMessage(sInputName, sMessage, oModel)
+                this._createMessage("suppliers/0/" + sInputName, sMessage, oModel)
                 return false
             }else {
-                this._removeMessage(sInputName)
+                this._removeMessage("suppliers/0/" + sInputName)
                 oInput.setValueState(constants.ValueState.NONE)
                 return true
             }
@@ -435,6 +435,7 @@ sap.ui.define([
 				processor: oModel
 			});
 			Messaging.addMessages(oMessage);
+            console.log(oMessage)
 		},
 
 		/**
