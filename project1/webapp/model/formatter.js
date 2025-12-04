@@ -15,9 +15,9 @@ sap.ui.define([
             const oDiscountDate = new Date(sDiscountDate)
             const oCurrentDate = new Date()
             if (oDiscountDate > oCurrentDate) {
-                return constants.ValueState.SUCCESS
+                return constants.VALUESTATE.SUCCESS
             }
-            return constants.ValueState.NONE
+            return constants.VALUESTATE.NONE
         },
 
         /**
@@ -30,9 +30,9 @@ sap.ui.define([
             const oCurrentDate = new Date()
 
             if (oDiscountDate > oCurrentDate) {
-                return constants.ValueState.SUCCESS
+                return constants.VALUESTATE.SUCCESS
             }
-            return constants.ValueState.ERROR
+            return constants.VALUESTATE.ERROR
         },
 
         /**

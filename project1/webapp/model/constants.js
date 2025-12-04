@@ -5,24 +5,24 @@ sap.ui.define([
 	"use strict";
 
 	return {
-        ValueState: {
+        VALUESTATE: {
             SUCCESS: "Success",
             NONE: "None",
             ERROR: "Error"
         },
 
-        SortIcons: {
-            default: "sap-icon://sort",
-            asc: "sap-icon://sort-ascending",
-            desc: "sap-icon://sort-descending"
+        SORTICONS: {
+            DEFAULT: "sap-icon://sort",
+            ASC: "sap-icon://sort-ascending",
+            DESC: "sap-icon://sort-descending"
         },
 
-        MessageBoxActions: {
-            Yes: "YES",
-            Close: "CLOSE"
+        MESSAGEBOXACTIONS: {
+            YES: "YES",
+            CLOSE: "CLOSE"
         },
 
-        DetailsSectionInputNames: {
+        DETAILSSECTIONINPUTNAMES: {
             NAME: "name",
             DESCRIPTION: "description",
             RATING: "rating",

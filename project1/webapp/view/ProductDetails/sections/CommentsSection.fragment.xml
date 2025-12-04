@@ -1,6 +1,6 @@
-<c:FragmentDefinition
+<core:FragmentDefinition
  xmlns="sap.m"
- xmlns:c="sap.ui.core"
+ xmlns:core="sap.ui.core"
  xmlns:l="sap.ui.layout">
     <l:VerticalLayout
 		class="sapUiContentPadding"
@@ -21,4 +21,4 @@
 			</List>
 		</l:content>
 	</l:VerticalLayout>
-</c:FragmentDefinition>
+</core:FragmentDefinition>

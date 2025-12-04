@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/MessageToast",
     "sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
-	"sap/ui/core/message/MessageType"
+	"sap/ui/core/message/MessageType",
+    "sap/base/util/uid"
 ], (
     BaseController,
     formatter,
@@ -17,14 +18,16 @@ sap.ui.define([
     MessageToast,
     Messaging,
     Message,
-    MessageType
+    MessageType,
+    UID
 ) => {
     "use strict";
 
     return BaseController.extend("project1.controller.ProductDetails", {
         formatter: formatter,
         _sID: "",
-        _oBundle: null,
+        oFragment: null,
+
         /**
          * On component init call attachPaterMatched.
          * @override
@@ -34,20 +37,17 @@ sap.ui.define([
         },
 
         /**
-         * Fetch Countries for suppliers input.
-         * Find index depending on the productID and bind it to the view.
-         * Create local model for Edit Mode.
-         * Create model for suppliers Section.(fragment)
-         * Create model for Details section and categories dropdown.
-         * Create model for Comments Section.
-         * Create model for Validations.
+         * Fetch Countries for suppliers input And do some init stuff when route is matched.
          * @private
          * @param {sap.ui.base.Event} oEvent
          */
-        _onRouteMatched: function(oEvent) {
-            this._fetchCountries()
+        _onRouteMatched: async function(oEvent) {
+            const oCountries = await productModel.fetchCountries()
+            if (oCountries) {
+                this.setModel(oCountries, "countriesModel")
+            }
+
             const oModel = this.getModel("productsModel")
-            this._oBundle = this.getModel("i18n").getResourceBundle()
 
             const oEditModeModel = new JSONModel({editable: false})
             this.setModel(oEditModeModel, "viewStateModel")
@@ -60,40 +60,7 @@ sap.ui.define([
             if (this._sID === 'new') {
                 this._clearUI()
             } else {
-                let aProducts = []
-                let oCurrentProduct = null
-    
-                if(oModel) {
-                    aProducts = oModel.getProperty("/products")
-                    const sPath = aProducts.findIndex(oItem => oItem.id === this._sID)
-                    this.getView().bindElement({
-                        path: '/products/' + sPath,
-                        model: "productsModel"
-                    })
-                    oCurrentProduct = aProducts[sPath]
-                }
-    
-                if (oCurrentProduct) {
-                    const aCurrentCategories = oCurrentProduct.categories.map(oItem => oItem.id)
-                    const oProductDetailsFormModel = new JSONModel({
-                            name: oCurrentProduct.name,
-                            description: oCurrentProduct.description,
-                            rating: oCurrentProduct.rating,
-                            releaseDate: oCurrentProduct.releaseDate,
-                            discountDate: oCurrentProduct.discountDate,
-                            price: oCurrentProduct.price,
-                            categories: aCurrentCategories
-                    })
-                    this.setModel(oProductDetailsFormModel, "detailsFormModel")
-    
-                    const aCurrentSuppliers = oCurrentProduct.suppliers
-                    const oSuppliersModel = new JSONModel({suppliers: [...aCurrentSuppliers]})
-                    this.setModel(oSuppliersModel, "suppliersModel")
-    
-                    const aCurrentComments = oCurrentProduct.comments
-                    const oCommentsModel = new JSONModel({comments: [...aCurrentComments]})
-                    this.setModel(oCommentsModel, "commentsModel")
-                }
+                this._bindObjectToView(oModel)
             }
 
             Messaging.removeAllMessages()
@@ -124,31 +91,27 @@ sap.ui.define([
 
             const oDetailsModel = this.getModel("detailsFormModel")
 
-			oInput.setValueState(constants.ValueState.ERROR)
+			oInput.setValueState(constants.VALUESTATE.ERROR)
 
-			if(sInputName === constants.DetailsSectionInputNames.NAME && sInputValue.length === 0) {
-                sMessage = this._oBundle.getText("detailsNameValidation")
-				this._createMessage(sInputName, sMessage, oDetailsModel)
-				return false
-			} else if (sInputName === constants.DetailsSectionInputNames.DESCRIPTION && (sInputValue.length > 50 || !sInputValue)) {
-                sMessage = this._oBundle.getText("detailsDescriptionValidation", [sInputValue.length])
-				this._createMessage(sInputName, sMessage, oDetailsModel)
-				return false
-			} else if (sInputName === constants.DetailsSectionInputNames.RATING && (!Number(sInputValue) || Number(sInputValue) > 5 || Number(sInputValue) < 1)) {
-                sMessage = this._oBundle.getText("detailsRatingValidation")
-				this._createMessage(sInputName, sMessage, oDetailsModel)
-			} else if (sInputName === constants.DetailsSectionInputNames.PRICE && !Number(sInputValue) && !sInputValue) {
-                sMessage = this._oBundle.getText("detailsPriceValidation")
-				this._createMessage(sInputName, sMessage, oDetailsModel)
-			} else if (sInputName === constants.DetailsSectionInputNames.CATEGORY && oInput.getSelectedKeys().length === 0) {
-                sMessage = this._oBundle.getText("detailsCategoryValidation")
-				this._createMessage(sInputName, sMessage, oDetailsModel)
+			if(sInputName === constants.DETAILSSECTIONINPUTNAMES.NAME && sInputValue.length === 0) {
+                sMessage = this.getI18nText("detailsNameValidation")
+			} else if (sInputName === constants.DETAILSSECTIONINPUTNAMES.DESCRIPTION && (sInputValue.length > 50 || !sInputValue)) {
+                sMessage = this.getI18nText("detailsDescriptionValidation", [sInputValue.length])
+			} else if (sInputName === constants.DETAILSSECTIONINPUTNAMES.RATING && (!Number(sInputValue) || Number(sInputValue) > 5 || Number(sInputValue) < 1)) {
+                sMessage = this.getI18nText("detailsRatingValidation")
+			} else if (sInputName === constants.DETAILSSECTIONINPUTNAMES.PRICE && !Number(sInputValue) && !sInputValue) {
+                sMessage = this.getI18nText("detailsPriceValidation")
+			} else if (sInputName === constants.DETAILSSECTIONINPUTNAMES.CATEGORY && oInput.getSelectedKeys().length === 0) {
+                sMessage = this.getI18nText("detailsCategoryValidation")
 			} else {
 				this._removeMessage(sInputName)
 				sMessage = ""
-				oInput.setValueState(constants.ValueState.NONE)
+				oInput.setValueState(constants.VALUESTATE.NONE)
 				return true
 			}
+
+            this._createMessage(sInputName, sMessage, oDetailsModel)
+            return false
 		},
         
         /**
@@ -159,7 +122,7 @@ sap.ui.define([
 			const aSuppliers = this.getModel("suppliersModel").getProperty("/suppliers")
 
 			const oEmptyFormData = {
-                id: this._generateSupplierID(),
+                id: UID(),
 				name: "",
 				country: "",
 				city: "",
@@ -189,8 +152,16 @@ sap.ui.define([
          */
         onMessagePopoverPress: async function(oEvent) {
 			const oSourceControl = oEvent.getSource();
-			const oMessagePopover = this.byId("idMessagePopover")
-			oMessagePopover.openBy(oSourceControl);
+            
+            if (!this.oFragment) {
+                this.oFragment = this.loadFragment({
+                    name: "project1.view.fragments.MessagePopover"
+                })
+            }
+            
+            this.oFragment.then(function(oPopOver) {
+                oPopOver.openBy(oSourceControl);
+            })
 		},
 
         /**
@@ -202,8 +173,11 @@ sap.ui.define([
             const oEditModel = this.getModel("viewStateModel")
             const bEditable = oEditModel.getProperty("/editable")
 
-            if (!bEditable) oEditModel.setProperty("/editable", true)
-            else MessageToast.show(this._oBundle.getText("textEditWarning"))
+            if (!bEditable) {
+                oEditModel.setProperty("/editable", true)
+            } else {
+                MessageToast.show(this.getI18nText("textEditWarning"))
+            }
         },
 
         /**
@@ -227,47 +201,15 @@ sap.ui.define([
             }
             
             if (!bValid) {
-                MessageToast.show(this._oBundle.getText("textFixErrors"))
+                MessageToast.show(this.getI18nText("textFixErrors"))
                 return 
             }
-            
-            const oSuppliers = this.getModel("suppliersModel")
-            const aSuppliers = oSuppliers.getProperty("/suppliers")
-    
-            const oDetailsFormModelData = this.getModel("detailsFormModel").getData()
-            const aAllCategory = this.getModel("categoriesModel").getProperty("/categories")
-
-            const aComments = this.getModel("commentsModel").getProperty("/comments")
 
             if (!(this._sID === 'new')) {
                 sPath = this.getView().getBindingContext("productsModel").getPath()
             }
 
-            const aDetailsCategories = [...oDetailsFormModelData.categories]
-            const aUpdatedSuppliers = aSuppliers.map(oSup => {
-                delete oSup.saveNew
-                return oSup
-            }) 
-
-            const aUpdatedCategories = aDetailsCategories.map(sID => {
-                return aAllCategory.find(oItem => oItem.id === sID)
-            })
-
-            // update
-            oData = {
-                id: this._sID,
-                name : oDetailsFormModelData.name,
-                description : oDetailsFormModelData.description,
-                rating : Number(oDetailsFormModelData.rating),
-                price : Number(oDetailsFormModelData.price),
-                releaseDate : oDetailsFormModelData.releaseDate,
-                discountDate : oDetailsFormModelData.discountDate,
-                categories: [...aUpdatedCategories],
-                suppliers: [...aUpdatedSuppliers],
-                comments : aComments
-            }
-            
-            oSuppliers.setProperty("/suppliers", aUpdatedSuppliers)
+            oData = this._updateModels()
             
             if (this._sID === 'new') {
                 const aUpdatedProducts = productModel.createProduct(oModel, oData)
@@ -280,7 +222,7 @@ sap.ui.define([
 
             this.byId("idFeedInput").setValue(null)
             this.getModel("viewStateModel").setProperty("/editable", false)
-            MessageToast.show(this._oBundle.getText("textProductSaveSuccessfully"))
+            MessageToast.show(this.getI18nText("textProductSaveSuccessfully"))
         },
 
         /**
@@ -324,7 +266,7 @@ sap.ui.define([
 
             Messaging.removeAllMessages()
             this.getModel("viewStateModel").setProperty("/editable", false)
-            MessageToast.show(this._oBundle.getText("textProductChangesCancel"))
+            MessageToast.show(this.getI18nText("textProductChangesCancel"))
         },
 
         /**
@@ -337,10 +279,8 @@ sap.ui.define([
 
             const aUpdatedArray = productModel.deleteProducts(oModel, [sID.id])
 
-            if (aUpdatedArray) {
-                oModel.setProperty("/products", aUpdatedArray)
-                this.navTo("RouteProductList", {}, true)
-            }
+            oModel.setProperty("/products", aUpdatedArray)
+            this.navTo("RouteProductList", {}, true)
         },
 
         /**
@@ -369,7 +309,7 @@ sap.ui.define([
             const sComment = oEvent.getParameter("value")
 
             if (!sComment) {
-                MessageToast.show(this._oBundle.getText("textWarningForComment"))
+                MessageToast.show(this.getI18nText("textWarningForComment"))
                 return
             }
 
@@ -385,10 +325,11 @@ sap.ui.define([
          * Fired when country input suggestion is selected. And set new model for city.
          * @param {sap.ui.base.Event} oEvent
          */
-        onCountryInput: function(oEvent) {
+        onCountryInput: async function(oEvent) {
             const sSelectedCountry = oEvent.getParameter("selectedItem").getText()
             if (sSelectedCountry) {
-                this._fetchCapital(sSelectedCountry)
+                const oCapital = await productModel.fetchCapital(sSelectedCountry)
+                this.setModel(oCapital, "capitalModel")
             }
         },
 
@@ -407,15 +348,15 @@ sap.ui.define([
             }
 
             const oModel = this.getModel("suppliersModel")
-            oInput.setValueState(constants.ValueState.ERROR)
+            oInput.setValueState(constants.VALUESTATE.ERROR)
             
             if (sInputName && sInputValue.length === 0) {
-                const sMessage = this._oBundle.getText("suppliersValidationMessage", [sInputName])
+                const sMessage = this.getI18nText("suppliersValidationMessage", [sInputName])
                 this._createMessage("suppliers/0/" + sInputName, sMessage, oModel)
                 return false
             }else {
                 this._removeMessage("suppliers/0/" + sInputName)
-                oInput.setValueState(constants.ValueState.NONE)
+                oInput.setValueState(constants.VALUESTATE.NONE)
                 return true
             }
         },
@@ -435,7 +376,6 @@ sap.ui.define([
 				processor: oModel
 			});
 			Messaging.addMessages(oMessage);
-            console.log(oMessage)
 		},
 
 		/**
@@ -451,34 +391,6 @@ sap.ui.define([
 				}.bind(this)
 			);
 		},
-
-        /**
-         * Wait for the response and set new local model for countries suggestion.
-         * @private
-         * @returns {void} 
-         */
-        _fetchCountries: async function() {
-            const aCountries = await productModel.getCountriesSuggestions()
-
-            if (aCountries && aCountries.length > 0 ) {
-                const oCountriesModel = new JSONModel({countries: [...aCountries]})
-                this.setModel(oCountriesModel, "countriesModel")
-            }
-        },
-
-        /**
-         * Wait for the response and set Property of city.
-         * @private
-         * @param {string} sCountryName
-         * @returns {void}
-         */
-        _fetchCapital: async function(sCountryName) {
-            const sCapital = await productModel.getCitySuggestion(sCountryName)
-            if (sCapital) {
-                const oCapitalModel = new JSONModel({capital: [sCapital]})
-                this.setModel(oCapitalModel, "capitalModel")
-            }
-        },
 
         /**
          * Get all Suppliers input And Return it.
@@ -510,17 +422,6 @@ sap.ui.define([
         },
 
         /**
-         * Create id for new supplier.
-         * @returns {string}
-         */
-        _generateSupplierID: function () {
-            const oModel = this.getModel("productsModel")
-            const aSupps = productModel.getAllSupplier(oModel).getData().suppliers
-            
-            return `sup_00${aSupps.length + 1}`
-        },
-
-        /**
          * When route dynamic id is 'new', clears the ui set local models to empty values.
          * @returns {void}
          */
@@ -541,6 +442,86 @@ sap.ui.define([
             this.setModel(new JSONModel(oDetailsEmpty), "detailsFormModel")
             this.setModel(new JSONModel({suppliers: []}), "suppliersModel")
             this.setModel(new JSONModel({comments: []}), "commentsModel")
+        },
+
+        /**
+         * Bind Element to the view and update the models for view at Init.
+         * @param {object} oModel
+         */
+        _bindObjectToView: function (oModel) {
+            let aProducts = []
+            let oCurrentProduct = null
+
+            if(oModel) {
+                aProducts = oModel.getProperty("/products")
+                const sPath = aProducts.findIndex(oItem => oItem.id === this._sID)
+                this.getView().bindElement({
+                    path: '/products/' + sPath,
+                    model: "productsModel"
+                })
+                oCurrentProduct = aProducts[sPath]
+            }
+
+            if (oCurrentProduct) {
+                const aCurrentCategories = oCurrentProduct.categories.map(oItem => oItem.id)
+                const oProductDetailsFormModel = new JSONModel({
+                        name: oCurrentProduct.name,
+                        description: oCurrentProduct.description,
+                        rating: oCurrentProduct.rating,
+                        releaseDate: oCurrentProduct.releaseDate,
+                        discountDate: oCurrentProduct.discountDate,
+                        price: oCurrentProduct.price,
+                        categories: aCurrentCategories
+                })
+                this.setModel(oProductDetailsFormModel, "detailsFormModel")
+
+                const aCurrentSuppliers = oCurrentProduct.suppliers
+                const oSuppliersModel = new JSONModel({suppliers: [...aCurrentSuppliers]})
+                this.setModel(oSuppliersModel, "suppliersModel")
+
+                const aCurrentComments = oCurrentProduct.comments
+                const oCommentsModel = new JSONModel({comments: [...aCurrentComments]})
+                this.setModel(oCommentsModel, "commentsModel")
+            }
+        },
+
+        /**
+         * @returns {object}
+         */
+        _updateModels: function() {
+            const oSuppliers = this.getModel("suppliersModel")
+            const aSuppliers = oSuppliers.getProperty("/suppliers")
+
+            const oDetailsFormModelData = this.getModel("detailsFormModel").getData()
+            const aAllCategory = this.getModel("categoriesModel").getProperty("/categories")
+
+            const aComments = this.getModel("commentsModel").getProperty("/comments")
+
+            const aDetailsCategories = [...oDetailsFormModelData.categories]
+
+            const aUpdatedSuppliers = aSuppliers.map(oSup => {
+                delete oSup.saveNew
+                return oSup
+            }) 
+
+            const aUpdatedCategories = aDetailsCategories.map(sID => {
+                return aAllCategory.find(oItem => oItem.id === sID)
+            })
+
+            oSuppliers.setProperty("/suppliers", aUpdatedSuppliers)
+
+            return {
+                id: this._sID,
+                name : oDetailsFormModelData.name,
+                description : oDetailsFormModelData.description,
+                rating : Number(oDetailsFormModelData.rating),
+                price : Number(oDetailsFormModelData.price),
+                releaseDate : oDetailsFormModelData.releaseDate,
+                discountDate : oDetailsFormModelData.discountDate,
+                categories: [...aUpdatedCategories],
+                suppliers: [...aUpdatedSuppliers],
+                comments : aComments
+            }
         }
     });
 })

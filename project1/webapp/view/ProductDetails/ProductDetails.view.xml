@@ -90,7 +90,7 @@
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection >
                         <uxap:blocks>
-                            <core:Fragment fragmentName="project1.view.sections.ProductDetailsSection"></core:Fragment>
+                            <core:Fragment fragmentName="project1.view.ProductDetails.sections.ProductDetailsSection"></core:Fragment>
                         </uxap:blocks>
                     </uxap:ObjectPageSubSection>
                 </uxap:subSections>
@@ -100,7 +100,7 @@
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection >
                          <uxap:blocks>
-                            <core:Fragment fragmentName="project1.view.sections.SuppliersSection"/> 
+                            <core:Fragment fragmentName="project1.view.ProductDetails.sections.SuppliersSection"/> 
                         </uxap:blocks>
                     </uxap:ObjectPageSubSection>
                 </uxap:subSections>
@@ -110,7 +110,7 @@
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection >
                          <uxap:blocks>
-                            <core:Fragment fragmentName="project1.view.sections.CommentsSection"/>
+                            <core:Fragment fragmentName="project1.view.ProductDetails.sections.CommentsSection"/>
                         </uxap:blocks>
                     </uxap:ObjectPageSubSection>
                 </uxap:subSections>
@@ -133,13 +133,4 @@
             </Bar>
         </uxap:footer>
     </uxap:ObjectPageLayout>
-
-
-    <MessagePopover items="{message>/}" id="idMessagePopover">
-		<MessageItem 
-			type="{message>type}"
-			title="{message>message}"
-			subtitle="{message>additionalText}"
-			description="{message>description}"/>
-	</MessagePopover>
 </mvc:View>

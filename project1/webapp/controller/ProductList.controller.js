@@ -17,7 +17,6 @@ sap.ui.define([
 
     return BaseController.extend("project1.controller.ProductList", {
         formatter: formatter,
-        _oBundle: null,
 
         /**
          * call the attachPatterMatch method.
@@ -34,7 +33,6 @@ sap.ui.define([
          * @returns {void}
          */
         _onRouteMatched: function () {
-            this._oBundle = this.getModel("i18n").getResourceBundle()
             const oProductsModel = this.getModel("productsModel")
 
             const oCategories = productModel.getAllCategory(oProductsModel)
@@ -134,19 +132,19 @@ sap.ui.define([
             const sProperty = oButton.getCustomData()[0].getValue()
             const sCurrentIcon = oButton.getIcon()
 
-            const oIconsObject = constants.SortIcons
+            const oIconsObject = constants.SORTICONS
             
             let sNewIcon = ""
             let aSorted = []
 
-            if (sCurrentIcon === oIconsObject.default) {
-                sNewIcon = oIconsObject.asc
+            if (sCurrentIcon === oIconsObject.DEFAULT) {
+                sNewIcon = oIconsObject.ASC
                 aSorted = productModel.onSort(sProperty, false)
-            } else if (sCurrentIcon === oIconsObject.asc) {
-                sNewIcon = oIconsObject.desc
+            } else if (sCurrentIcon === oIconsObject.ASC) {
+                sNewIcon = oIconsObject.DESC
                 aSorted = productModel.onSort(sProperty, true)
-            } else if (sCurrentIcon === oIconsObject.desc) {
-                sNewIcon = oIconsObject.default
+            } else if (sCurrentIcon === oIconsObject.DESC) {
+                sNewIcon = oIconsObject.DEFAULT
                 aSorted = null
             }
 
@@ -194,15 +192,15 @@ sap.ui.define([
             })
 
             if (aSelectedItems.length === 1) {
-                sMessage = this._oBundle.getText("messageForOneProduct", [sProductName])
+                sMessage = this.getI18nText("messageForOneProduct", [sProductName])
             } else {
-                sMessage = this._oBundle.getText("messageForMultiProducts", [aSelectedItems.length])
+                sMessage = this.getI18nText("messageForMultiProducts", [aSelectedItems.length])
             }
 
             MessageBox.warning(sMessage, {
                 actions: [MessageBox.Action.YES, MessageBox.Action.CLOSE],
                 onClose: function(sAction) {
-                    if (sAction === constants.MessageBoxActions.Yes) {
+                    if (sAction === constants.MESSAGEBOXACTIONS.YES) {
                         this._onProductsDeletion(aSelectedItemsID)
                     }
                 }.bind(this)
@@ -219,12 +217,11 @@ sap.ui.define([
             const oModel = this.getModel("productsModel")
             const aUpdatedProducts = productModel.deleteProducts(oModel, aSelectedItemsID)
 
-            if(aUpdatedProducts) {
-                oModel.setProperty("/products", aUpdatedProducts)
-                
-                this._clearTableSelectedItems()
-                this._setDeleteButtonEnable(false)
-            }
+            oModel.setProperty("/products", aUpdatedProducts)
+            
+            this._clearTableSelectedItems()
+            this._setDeleteButtonEnable(false)
+            
         },
 
         /**
@@ -279,7 +276,7 @@ sap.ui.define([
                 if(oButton && oBtn === oButton) {
                     return
                 }
-                oBtn.setIcon(constants.SortIcons.default)
+                oBtn.setIcon(constants.SORTICONS.DEFAULT)
             })
         }
     }); 

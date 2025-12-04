@@ -99,7 +99,7 @@
         },
         "TargetProductDetails": {
           "id": "idObjectPageLayout",
-          "name": "ProductDetails"
+          "name": "ProductDetails.ProductDetails"
         }
       }
     },

@@ -1,6 +1,6 @@
-<c:FragmentDefinition
+<core:FragmentDefinition
 	xmlns="sap.m"
-	xmlns:c="sap.ui.core">
+	xmlns:core="sap.ui.core">
       <Table 
 	   items="{suppliersModel>/suppliers}" 
 	   id="idSuppliersTable" 
@@ -149,4 +149,4 @@
 		   </ColumnListItem>
 	   </Table>
 
-</c:FragmentDefinition>
+</core:FragmentDefinition>

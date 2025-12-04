@@ -182,9 +182,10 @@ sap.ui.define([
 
         /**
          * Fetches country names from the API.
+         * @private
          * @returns {Array}
          */
-        getCountriesSuggestions: async function() {
+        _getCountriesSuggestions: async function() {
             try {
                 return await fetch("/api/all?fields=name")
                 .then(resp => resp.json())
@@ -199,9 +200,10 @@ sap.ui.define([
         /**
          * Fetche the Capital of the country from the API.
          * @param {string} sCountryName 
+         * @private
          * @returns {string} name of capital
          */
-        getCitySuggestion: async function(sCountryName) {
+        _getCitySuggestion: async function(sCountryName) {
             try {
                 return await fetch(`/api/name/${sCountryName.toLowerCase()}?fields=capital`)
                 .then(resp => resp.json())
@@ -211,6 +213,34 @@ sap.ui.define([
             } catch (err) {
                 console.error(err)
             }
-        }
+        },
+
+        
+        /**
+         * Wait for the response and set new local model for countries suggestion.
+         * @returns {sap.ui.model.json.JSONModel | void} 
+         */
+        fetchCountries: async function() {
+            const aCountries = await this._getCountriesSuggestions()
+
+            if (aCountries && aCountries.length > 0 ) {
+                const oCountriesModel = new JSONModel({countries: [...aCountries]})
+                return oCountriesModel
+            }
+        },
+
+        
+        /**
+         * Wait for the response and set Property of city.
+         * @param {string} sCountryName
+         * @returns {sap.ui.model.json.JSONModel | void}
+         */
+        fetchCapital: async function(sCountryName) {
+            const sCapital = await this._getCitySuggestion(sCountryName)
+            if (sCapital) {
+                const oCapitalModel = new JSONModel({capital: [sCapital]})
+                return oCapitalModel
+            }
+        },
     }
 });
