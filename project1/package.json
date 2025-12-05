@@ -17,7 +17,8 @@
     "karma-coverage": "^2.2.1",
     "karma-edge-launcher": "^0.4.2",
     "karma-qunit": "^4.2.1",
-    "karma-ui5": "^4.1.0"
+    "karma-ui5": "^4.1.0",
+    "ui5-middleware-simpleproxy": "^3.5.2"
   },
   "scripts": {
     "start": "fiori run --open index.html",

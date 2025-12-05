@@ -5,8 +5,8 @@
       "name": "Smartphone X Pro",
       "description": "High-performance smartphone with advanced camera features.",
       "rating": 5,
-      "releaseDate": "2024-03-15",
-      "discountDate": "2025-11-15",
+      "releaseDate": "2025-11-21",
+      "discountDate": "2026-12-30",
       "price": 999.99,
       "categories": [
         {
@@ -45,8 +45,8 @@
       "name": "Smart Watch Series 7",
       "description": "Fitness tracking and smart notifications on your wrist.",
       "rating": 4,
-      "releaseDate": "2024-06-20",
-      "discountDate": "2025-02-15",
+      "releaseDate": "2025-11-20",
+      "discountDate": "2025-12-30",
       "price": 249.00,
       "categories": [
         {

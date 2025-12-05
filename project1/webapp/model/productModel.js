@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/ui/model/Sorter"
+    "sap/ui/model/Sorter",
 ], function(
 	JSONModel,
 	Filter,
@@ -64,6 +64,19 @@ sap.ui.define([
                 }
             })
             return new JSONModel({suppliers: aSuppliers})
+        },
+
+        /**
+         * Create new Product
+         * @param {sap.ui.model.json.JSONModel} oModel model of products.
+         * @param {object} oPorduct new product object
+         */
+        createProduct: function(oModel, oProduct) {
+            const aProducts = oModel.getProperty("/products")
+            oProduct.id = "prod_0" + (aProducts.length + 1)
+            aProducts.unshift(oProduct)
+
+            return aProducts
         },
 
         /**
@@ -165,6 +178,69 @@ sap.ui.define([
                 })
             }
             return new Sorter(sProperty, bDescending)
-        }
+        },
+
+        /**
+         * Fetches country names from the API.
+         * @private
+         * @returns {Array}
+         */
+        _getCountriesSuggestions: async function() {
+            try {
+                return await fetch("/api/all?fields=name")
+                .then(resp => resp.json())
+                .then(aData => {
+                    const aFilteredArray = aData.map(oItem => oItem.name.common)
+                    return aFilteredArray
+                })
+            } catch (err) {
+                console.error(err)
+            }
+        },
+        /**
+         * Fetche the Capital of the country from the API.
+         * @param {string} sCountryName 
+         * @private
+         * @returns {string} name of capital
+         */
+        _getCitySuggestion: async function(sCountryName) {
+            try {
+                return await fetch(`/api/name/${sCountryName.toLowerCase()}?fields=capital`)
+                .then(resp => resp.json())
+                .then(aData => {
+                    return aData[0].capital[0]
+                })
+            } catch (err) {
+                console.error(err)
+            }
+        },
+
+        
+        /**
+         * Wait for the response and set new local model for countries suggestion.
+         * @returns {sap.ui.model.json.JSONModel | void} 
+         */
+        fetchCountries: async function() {
+            const aCountries = await this._getCountriesSuggestions()
+
+            if (aCountries && aCountries.length > 0 ) {
+                const oCountriesModel = new JSONModel({countries: [...aCountries]})
+                return oCountriesModel
+            }
+        },
+
+        
+        /**
+         * Wait for the response and set Property of city.
+         * @param {string} sCountryName
+         * @returns {sap.ui.model.json.JSONModel | void}
+         */
+        fetchCapital: async function(sCountryName) {
+            const sCapital = await this._getCitySuggestion(sCountryName)
+            if (sCapital) {
+                const oCapitalModel = new JSONModel({capital: [sCapital]})
+                return oCapitalModel
+            }
+        },
     }
 });

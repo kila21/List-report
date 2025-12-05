@@ -1,0 +1,152 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+      <Table 
+	   items="{suppliersModel>/suppliers}" 
+	   id="idSuppliersTable" 
+	   mode="{= ${viewStateModel>/editable} ? 'Delete' : 'None'}" 
+	   delete="onSupplierDeleteButtonPress">
+	   		<headerToolbar>
+				<Toolbar enabled="{= ${viewStateModel>/editable}}">
+					<content>
+						<ToolbarSpacer />
+						<Button 
+						 enabled="{= !${suppliersModel>/suppliers/0/saveNew}}"
+						 text="{i18n>buttonCreate}" 
+						 type="Emphasized"
+						 press="onSuppliersCreateButtonPress"/>
+					</content>
+				</Toolbar>
+			</headerToolbar>
+		   <columns>
+				<Column >
+					<Text text="{i18n>suppliersTableName}"></Text>
+				</Column>
+
+				<Column >
+					<Text text="{i18n>suppliersTableCountry}"></Text>
+				</Column>
+
+				<Column >
+					<Text text="{i18n>suppliersTableCity}"></Text>
+				</Column>
+
+				<Column >
+					<Text text="{i18n>suppliersTableStreet}"></Text>
+				</Column>
+
+				<Column >
+					<Text text="{i18n>suppliersTableState}"></Text>
+				</Column>
+
+				<Column >
+					<Text text="{i18n>suppliersTableZipCode}"></Text>
+				</Column>
+		   </columns>
+
+		   <ColumnListItem >
+		   		<HBox>
+					<Text 
+					 text="{suppliersModel>name}" 
+					visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.disableControl'}"/>
+					<Input 
+					 id="idNameSupplierInput"
+					 fieldGroupIds="supplierInputs"
+                     name="name"
+                     value="{suppliersModel>name}" 
+                     visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.enableControl'}"
+                     change="onSuppliersInputChange"/>
+				</HBox>
+
+				<HBox> 
+		   			<Text 
+					 text="{suppliersModel>country}" 
+					 visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.disableControl'}"/>
+					<Input
+					 id="idCountrySupplierInput"
+					 fieldGroupIds="supplierInputs"
+                     name="country"
+                     visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.enableControl'}"
+					 showSuggestion="true"
+					 suggestionItems="{
+						path: 'countriesModel>/countries',
+						templateShareable: true
+					 }"
+					 suggestionItemSelected="onCountryInput"
+                     value="{suppliersModel>country}"
+                     change="onSuppliersInputChange">
+						<suggestionItems>
+							<SuggestionItem text="{countriesModel>}" key="{countriesModel>}"/>
+						</suggestionItems>
+					</Input>
+				</HBox>
+
+				<HBox> 
+		   			<Text
+					 text="{suppliersModel>city}"
+					 visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.disableControl'}"/>
+					<Input 
+					 id="idCitySupplierInput"
+					 fieldGroupIds="supplierInputs"
+                     name="city"
+                     value="{suppliersModel>city}" 
+                     visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.enableControl'}"
+					 showSuggestion="true"
+					 startSuggestion="0"
+					 suggestionItems="{
+					 	path: 'capitalModel>/capital',
+						templateShareable: true
+					 }"
+                     change="onSuppliersInputChange">
+					 	<suggestionItems>
+							<SuggestionItem 
+							 text="{capitalModel>}"
+							 key="{capitalModel>}"/>
+						</suggestionItems>
+					</Input>
+				</HBox>
+
+				<HBox> 
+		   			<Text 
+					 text="{suppliersModel>street}" 
+					 visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.disableControl'}"/>
+					<Input 
+					 id="idStreetSupplierInput"
+					 fieldGroupIds="supplierInputs"
+                     name="street"
+                     value="{suppliersModel>street}"
+                     visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.enableControl'}"
+                     change="onSuppliersInputChange"/>
+				</HBox>
+
+				<HBox> 
+		   			<Text 
+					 text="{suppliersModel>state}" 
+					 visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.disableControl'}"/>
+					<Input
+					 id="idStateSupplierInput"
+					 fieldGroupIds="supplierInputs"
+                     name="state"
+                     value="{suppliersModel>state}"
+                     visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.enableControl'}"
+                     change="onSuppliersInputChange"/>
+				</HBox>
+
+				<HBox> 
+		   			<Text 
+					 text="{suppliersModel>zipCode}" 
+					 visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.disableControl'}"/>
+					<Input  
+				  	 id="idZipCodeSupplierInput"
+					 fieldGroupIds="supplierInputs"
+                     name="zipCode"
+                     type="Number" 
+                     value="{suppliersModel>zipCode}" 
+                     visible="{path: 'suppliersModel>saveNew', formatter: '.formatter.enableControl'}"
+                     change="onSuppliersInputChange"
+					 valueLiveUpdate="true"/>
+				</HBox>
+		   </ColumnListItem>
+	   </Table>
+
+</core:FragmentDefinition>

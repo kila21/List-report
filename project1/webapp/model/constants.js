@@ -5,15 +5,29 @@ sap.ui.define([
 	"use strict";
 
 	return {
-        ValueState: {
+        VALUESTATE: {
             SUCCESS: "Success",
-            NONE: "None"
+            NONE: "None",
+            ERROR: "Error"
         },
 
-        SortIcons: {
-            default: "sap-icon://sort",
-            asc: "sap-icon://sort-ascending",
-            desc: "sap-icon://sort-descending"
+        SORTICONS: {
+            DEFAULT: "sap-icon://sort",
+            ASC: "sap-icon://sort-ascending",
+            DESC: "sap-icon://sort-descending"
+        },
+
+        MESSAGEBOXACTIONS: {
+            YES: "YES",
+            CLOSE: "CLOSE"
+        },
+
+        DETAILSSECTIONINPUTNAMES: {
+            NAME: "name",
+            DESCRIPTION: "description",
+            RATING: "rating",
+            PRICE: "price",
+            CATEGORY: "categories"
         }
 	};
 });

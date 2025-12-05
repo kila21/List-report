@@ -1,0 +1,83 @@
+<core:FragmentDefinition
+ xmlns="sap.m"
+ xmlns:core="sap.ui.core"
+ xmlns:form="sap.ui.layout.form">
+    <form:SimpleForm editable="false">
+		<form:content>
+			<Label text="{i18n>productFormNameLabel}" class="sapUiTinyMarginTop"/>
+			<Input 
+			 id="idDetailsNameInput"
+			 name="name"
+			 value="{detailsFormModel>/name}" 
+			 change="onDetailsInputChange"
+			 editable="{= ${viewStateModel>/editable}}"/>
+
+			<Label text="{i18n>productFormDescriptionLabel}"/>
+			<Input 
+			 id="idDetailsDescriptionInput"
+			 name="description"
+			 value="{detailsFormModel>/description}" 
+			 editable="{= ${viewStateModel>/editable}}"
+			 change="onDetailsInputChange"/>
+		
+			<Label text="{i18n>productFormRatingLabel}" class="sapUiTinyMarginTop"/>
+			<Input
+			 id="idDetailsRatingInput"
+			 name="rating"
+			 type="Number"
+			 value="{detailsFormModel>/rating}" 
+			 editable="{= ${viewStateModel>/editable}}"
+			 change="onDetailsInputChange"/>
+
+			<Label text="{i18n>productFormReleaseDateLabel}" class="sapUiTinyMarginTop"/>
+			<DatePicker 
+			 id="idDetailsReleaseDateInput"
+			 name="releaseDate"
+			 value="{
+				path: 'detailsFormModel>/releaseDate',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					source: { pattern: 'yyyy-MM-dd' }
+				}
+			 }" 
+			 editable="{= ${viewStateModel>/editable}}"
+			 change="onDetailsInputChange"/>
+
+			<Label text="{i18n>productFormDiscountDateLabel}" class="sapUiTinyMarginTop"/>
+			<DatePicker 
+			 id="idDetailsDiscountDateInput"
+			 name="discountDate"
+			 value="{
+			  	path: 'detailsFormModel>/discountDate',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					source: { pattern: 'yyyy-MM-dd' }
+				}
+			 }" 
+			 editable="{= ${viewStateModel>/editable}}"
+			 change="onDetailsInputChange"/>
+
+			<Label text="{i18n>productFormPriceLabel}" class="sapUiTinyMarginTop"/>
+			<Input 
+			 id="idDetailsPriceInput"
+			 name="price"
+			 type="Number" 
+			 value="{detailsFormModel>/price}"
+			 editable="{= ${viewStateModel>/editable}}"
+			 change="onDetailsInputChange"/>
+
+			<Label text="{i18n>productFormCategoriesLabel}" class="sapUiTinyMarginTop"/>
+			<MultiComboBox 
+			 id="idDetailsCategoriesInput"
+			 name="categories"
+			 selectedKeys="{detailsFormModel>/categories}" 
+			 editable="{= ${viewStateModel>/editable}}"
+			 items="{categoriesModel>/categories}"
+			 selectionChange="onDetailsInputChange">
+				<core:Item 
+				 key="{categoriesModel>id}"
+				 text="{categoriesModel>name}"/>
+			</MultiComboBox>
+		</form:content>
+	</form:SimpleForm>
+</core:FragmentDefinition>

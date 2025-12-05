@@ -3,13 +3,15 @@ sap.ui.define([
     "project1/model/constants",
     "project1/model/productModel",
     "project1/model/formatter",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+    "sap/m/MessageBox"
 ], (
     BaseController,
 	constants,
 	productModel,
 	formatter,
-	JSONModel
+	JSONModel,
+	MessageBox,
 ) => {
     "use strict";
 
@@ -17,23 +19,28 @@ sap.ui.define([
         formatter: formatter,
 
         /**
-         * set productsModal to the view.
-         * when request is Completed set categories and Suppliers Model.(filter options)
-         * set model for delete button.(Enabled or not)
-         * set model for filter options.
+         * call the attachPatterMatch method.
          * @override
          */
         onInit() {
-            const oProductsModel = productModel.createProductModel()
-            this.setModel(oProductsModel, "productsModel")
+            this.getRouter().getRoute("RouteProductList").attachPatternMatched(this._onRouteMatched, this)
+        },
 
-            oProductsModel.attachEventOnce("requestCompleted", () => {
-                const oCategories = productModel.getAllCategory(oProductsModel)
-                this.setModel(oCategories, "categoriesModel")
+        /**
+         * Set categories and Suppliers Model.(filter options)
+         * set model for delete button.(Enabled or not)
+         * set model for filter options.
+         * @returns {void}
+         */
+        _onRouteMatched: function () {
+            const oProductsModel = this.getModel("productsModel")
 
-                const oSuppliers = productModel.getAllSupplier(oProductsModel)
-                this.setModel(oSuppliers, "suppliersModel")
-            })
+            const oCategories = productModel.getAllCategory(oProductsModel)
+            this.setModel(oCategories, "categoriesModel")
+
+            const oSuppliers = productModel.getAllSupplier(oProductsModel)
+            this.setModel(oSuppliers, "suppliersModel")
+            
 
             const oDeleteButtonModel = new JSONModel({
                 deleteEnabled: false
@@ -125,19 +132,19 @@ sap.ui.define([
             const sProperty = oButton.getCustomData()[0].getValue()
             const sCurrentIcon = oButton.getIcon()
 
-            const oIconsObject = constants.SortIcons
+            const oIconsObject = constants.SORTICONS
             
             let sNewIcon = ""
             let aSorted = []
 
-            if (sCurrentIcon === oIconsObject.default) {
-                sNewIcon = oIconsObject.asc
+            if (sCurrentIcon === oIconsObject.DEFAULT) {
+                sNewIcon = oIconsObject.ASC
                 aSorted = productModel.onSort(sProperty, false)
-            } else if (sCurrentIcon === oIconsObject.asc) {
-                sNewIcon = oIconsObject.desc
+            } else if (sCurrentIcon === oIconsObject.ASC) {
+                sNewIcon = oIconsObject.DESC
                 aSorted = productModel.onSort(sProperty, true)
-            } else if (sCurrentIcon === oIconsObject.desc) {
-                sNewIcon = oIconsObject.default
+            } else if (sCurrentIcon === oIconsObject.DESC) {
+                sNewIcon = oIconsObject.DEFAULT
                 aSorted = null
             }
 
@@ -160,63 +167,71 @@ sap.ui.define([
         },
 
         /**
-         * Finds out If there is selected items in table and call function to ask user about delete.
+         * on Create new product. Navigate To object page.
+         * 
+         */
+        onCreateButtonPress: function() {
+            this.navTo("RouteProductDetails", {productID: 'new'})
+        },
+
+        /**
+         * Check how many item are selected in the table and ask user for deletion with messageBox.
          * @param {sap.ui.base.Event} oEvent press event on button
          */
         onDeleteButtonPress: async function(oEvent) {
             let sProductName = ""
+            let sMessage = ""
+            const aSelectedItemsID = []
             const aSelectedItems = this._getSelectedItemsFromTable()
 
             aSelectedItems.map(oProduct => {
                 const oObject = oProduct.getBindingContext("productsModel").getObject()
                 sProductName = oObject.name
+                aSelectedItemsID.push(oObject.id)
                 return oObject
             })
-            await this._openConfirmDeleteDialog(aSelectedItems.length, oEvent.getSource(), sProductName)
-        },
 
-        /**
-         * This function set the Description depending on the arguments and opens the dialog.
-         * @private 
-         * @param {Integer} iCount length of selected items.
-         * @param {sap.m.Button} oButton
-         * @param {string} [sName] name of product item. optional parameter.
-         */
-        _openConfirmDeleteDialog: async function(iCount, oButton, sName) {
-            const oMessagePopover = this.byId("idConfirmationMessagePopover")
-            const oMessageItem = this.byId("idMessageItem")
-            let sDescription = ''
-
-            
-            if (iCount === 1 && sName) {
-                sDescription = `Do you really want to delete product ${sName}?`
+            if (aSelectedItems.length === 1) {
+                sMessage = this.getI18nText("messageForOneProduct", [sProductName])
             } else {
-                sDescription = `Do you really want to delete ${iCount} products?`
+                sMessage = this.getI18nText("messageForMultiProducts", [aSelectedItems.length])
             }
-            oMessageItem.setDescription(sDescription)
-            oMessagePopover.openBy(oButton)
-         
+
+            MessageBox.warning(sMessage, {
+                actions: [MessageBox.Action.YES, MessageBox.Action.CLOSE],
+                onClose: function(sAction) {
+                    if (sAction === constants.MESSAGEBOXACTIONS.YES) {
+                        this._onProductsDeletion(aSelectedItemsID)
+                    }
+                }.bind(this)
+            });
         },
 
         /**
          * Delete the item and clear the UI.
+         * @private
+         * @param {Array} aSelectedItemsID
          * @returns {void}
          */
-        onLinkDeletionPress: function() {
-            const aSelectedItems = this._getSelectedItemsFromTable()
-            const aID = aSelectedItems.map(
-                oProduct => oProduct.getBindingContext("productsModel").getObject().id
-            )
+        _onProductsDeletion: function(aSelectedItemsID) {
             const oModel = this.getModel("productsModel")
-            const aUpdatedProducts = productModel.deleteProducts(oModel, aID)
+            const aUpdatedProducts = productModel.deleteProducts(oModel, aSelectedItemsID)
 
-            if(aUpdatedProducts) {
-                oModel.setProperty("/products", aUpdatedProducts)
-                
-                this._clearTableSelectedItems()
-                this._setDeleteButtonEnable(false)
-                this._onButtonClosePress()
-            }
+            oModel.setProperty("/products", aUpdatedProducts)
+            
+            this._clearTableSelectedItems()
+            this._setDeleteButtonEnable(false)
+            
+        },
+
+        /**
+         * Clicking on the item inside the table will navigate to the object page.
+         * @param {sap.ui.base.Event} oEvent
+         * 
+         */
+        onProductsTableItemPress: function(oEvent) {
+            const sClickedID = oEvent.getParameter("listItem").getBindingContext("productsModel").getProperty("id")
+            this.navTo("RouteProductDetails", {productID: sClickedID})
         },
 
         /**
@@ -249,16 +264,6 @@ sap.ui.define([
         },
 
         /**
-         * Close the dialog.
-         * @private
-         * @returns {void}
-        */
-        _onButtonClosePress: function() {
-            const oMessagePopover = this.byId("idConfirmationMessagePopover")
-            oMessagePopover.close()
-        },
-
-        /**
          * Reset all button icon to the default.
          * @private
          * @param {sap.m.Button} oButton
@@ -271,7 +276,7 @@ sap.ui.define([
                 if(oButton && oBtn === oButton) {
                     return
                 }
-                oBtn.setIcon(constants.SortIcons.default)
+                oBtn.setIcon(constants.SORTICONS.DEFAULT)
             })
         }
     }); 

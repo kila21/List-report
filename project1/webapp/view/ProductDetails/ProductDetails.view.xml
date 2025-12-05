@@ -1,0 +1,136 @@
+<mvc:View
+ xmlns:tnt="sap.tnt" 
+ xmlns:uxap="sap.uxap"
+ xmlns:core="sap.ui.core"
+ controllerName="project1.controller.ProductDetails"
+ xmlns:mvc="sap.ui.core.mvc"
+ xmlns="sap.m">
+    <uxap:ObjectPageLayout
+     id="idObjectPageLayout" 
+     showEditHeaderButton="true" 
+     showFooter="{= ${viewStateModel>/editable}}">
+        <uxap:headerTitle>
+            <uxap:ObjectPageDynamicHeaderTitle >
+                <uxap:expandedHeading>
+                    <Title text="{= ${detailsFormModel>/name} || ${i18n>DetailTitlePlaceholder}}"></Title>
+                </uxap:expandedHeading>
+
+                <uxap:snappedHeading>
+                    <Title text="{= ${detailsFormModel>/name} || ${i18n>DetailTitlePlaceholder}}"/>
+                </uxap:snappedHeading>
+
+                <uxap:expandedContent>
+                    <Text text="{detailsFormModel>/description}"/>
+                </uxap:expandedContent>
+
+                <uxap:snappedContent>
+                    <Text text="{detailsFormModel>/description}"/>
+                </uxap:snappedContent> 
+
+                <uxap:actions>
+                    <Button 
+                     text="{i18n>buttonEdit}" 
+                     enabled="{= !${viewStateModel>/editable}}"
+                     press="onEditButtonPress"/>
+                    <Button 
+                     visible="{= !!${productsModel>id}}"
+                     text="{i18n>buttonDelete}" 
+                     type="Reject" 
+                     press="onDeleteButtonPress" />
+                </uxap:actions>       
+            </uxap:ObjectPageDynamicHeaderTitle>
+        </uxap:headerTitle>
+
+        <uxap:headerContent>
+            <HBox >
+                <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                    <Title 
+                     text="{i18n>facetReleaseInformation}"/>
+                    <ObjectStatus 
+                    title="{i18n>facetTitleTotal}" 
+                    text="{
+                        path: 'detailsFormModel>/releaseDate',
+                        formatter: '.formatter.displayTotalDays'
+                    }" />
+
+                    <ObjectStatus state="{
+                        path: 'detailsFormModel>/discountDate',
+                        type: 'sap.ui.model.type.Date',
+                        formatOptions: {
+                            source: { pattern: 'yyyy-MM-dd' }
+                        },
+                        formatter: '.formatter.displaySaleWithState'
+                    }" 
+                    text="{i18n>facetTitleSale}"
+                    class="sapMObjectStatusLarge"/>
+
+                    <tnt:InfoLabel
+                     visible="{
+                        path: 'detailsFormModel>/releaseDate',
+                        formatter: '.formatter.displayLabelNew'
+                     }"
+                     text="{i18n>facetTitleNew}"/>
+                </VBox>
+
+                <VBox>
+                    <Title text="{i18n>facetTitlePrice}"/>
+
+                    <ObjectNumber 
+                     number="{detailsFormModel>/price}"
+                     unit="{i18n>facetPriceCurrency}"
+                     state="Success"
+                     class="sapMObjectNumberLarge">
+                    </ObjectNumber>
+                </VBox>
+            </HBox>
+        </uxap:headerContent>
+
+        <uxap:sections>
+            <uxap:ObjectPageSection id="idProductDetailSection" title="{i18n>productDetailsSection}">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection >
+                        <uxap:blocks>
+                            <core:Fragment fragmentName="project1.view.ProductDetails.sections.ProductDetailsSection"></core:Fragment>
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+            
+            <uxap:ObjectPageSection id="idProductSuppliersSection" title="{i18n>productSuppliersSection}">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection >
+                         <uxap:blocks>
+                            <core:Fragment fragmentName="project1.view.ProductDetails.sections.SuppliersSection"/> 
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+
+            <uxap:ObjectPageSection id="idProductCommentsSection" title="{i18n>productCommentsSection}">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection >
+                         <uxap:blocks>
+                            <core:Fragment fragmentName="project1.view.ProductDetails.sections.CommentsSection"/>
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+        </uxap:sections>
+
+        <uxap:footer>
+            <Bar>
+                <contentLeft>
+                    <Button 
+                     icon="sap-icon://alert"
+                     type="Negative"
+                     text="{= ${message>/}.length }"
+                     press="onMessagePopoverPress"/>
+                </contentLeft>
+                <contentRight>
+                    <Button enabled="{= ${message>/}.length === 0}" text="{i18n>buttonSave}" press="onSaveButtonPress"/>
+                    <Button text="{i18n>buttonCancel}" type="Reject" press="onCancelButtonPress"/>
+                </contentRight>
+            </Bar>
+        </uxap:footer>
+    </uxap:ObjectPageLayout>
+</mvc:View>

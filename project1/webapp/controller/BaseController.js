@@ -57,6 +57,17 @@ sap.ui.define([
          */
         navTo: function(sName, oParameters, bReplace) {
             this.getRouter().navTo(sName, oParameters, undefined, bReplace)
+        },
+
+        /**
+         * Returns text from the resource bundle.
+         * @param {string} sTextName
+         * @param {array} [sValue]
+         * @returns {string}
+         */
+        getI18nText: function(sTextName, sValue) {
+            const oBundle = this.getModel("i18n").getResourceBundle()
+            return oBundle.getText(sTextName, sValue && sValue)
         }
 	});
 });

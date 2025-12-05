@@ -86,7 +86,7 @@
         },
         {
           "name": "RouteProductDetails",
-          "pattern": "ProductDetails",
+          "pattern": "product/{productID}",
           "target": [
             "TargetProductDetails"
           ]
@@ -94,12 +94,12 @@
       ],
       "targets": {
         "TargetProductList": {
-          "id": "ProductList",
+          "id": "idProductListPage",
           "name": "ProductList"
         },
         "TargetProductDetails": {
-          "id": "ProductDetails",
-          "name": "ProductDetails"
+          "id": "idObjectPageLayout",
+          "name": "ProductDetails.ProductDetails"
         }
       }
     },

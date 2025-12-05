@@ -83,19 +83,22 @@
                 <Table
                  id="idProductsTable"
                  items="{productsModel>/products}" 
-                 mode="MultiSelect" 
+                 mode="MultiSelect"
+                 itemPress="onProductsTableItemPress"
                  selectionChange="onProductsTableSelectionChange">
                     <headerToolbar>
-                        <Toolbar>
-                            <Button text="{i18n>buttonCreate}"></Button>
+                        <OverflowToolbar >
+                            <ToolbarSpacer />
+                            <Button
+                             text="{i18n>buttonCreate}"
+                             press="onCreateButtonPress"/>
                             <Button 
                              id="idDeleteButton"
                              press="onDeleteButtonPress"
                              text="{i18n>buttonDelete}" 
                              enabled="{deleteButtonModel>/deleteEnabled}" 
-                             type="Reject">
-                            </Button>
-                        </Toolbar>
+                             type="Reject"/>
+                        </OverflowToolbar>
                     </headerToolbar>
                     <columns>
                         <Column>
@@ -185,10 +188,11 @@
                     </columns>
 
                     <ColumnListItem
-                        highlight="{
-                            path: 'productsModel>discountDate',
-                            formatter: '.formatter.highlightRow'
-                        }">
+                     type="Navigation"
+                     highlight="{
+                        path: 'productsModel>discountDate',
+                        formatter: '.formatter.highlightRow'
+                     }">
                         <Text text="{productsModel>name}"></Text>
                         <Text text="{productsModel>description}"></Text>
                                 <Text text="{
@@ -216,16 +220,5 @@
                 </Table>
             </f:content>
         </f:DynamicPage>
-
-        <MessagePopover id="idConfirmationMessagePopover">
-            <headerButton>
-                <Button icon="sap-icon://close"></Button>
-            </headerButton>
-            <items>
-                <MessageItem id="idMessageItem" title="{i18n>deleteDialogTitle}" type="Warning">
-                    <Link text="{i18n>buttonYes}" emphasized="true" press="onLinkDeletionPress"></Link>
-                </MessageItem>
-            </items>
-        </MessagePopover>
     </Page>
 </mvc:View>

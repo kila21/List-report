@@ -15,13 +15,13 @@ sap.ui.define([
         const sDiscountDate = "2024-11-15"
         const sReturnedValue = formatter.highlightRow(sDiscountDate)
 
-        assert.strictEqual(sReturnedValue, constants.ValueState.NONE, "Correct State returned (None).")
+        assert.strictEqual(sReturnedValue, constants.VALUESTATE.NONE, "Correct State returned (None).")
     });
 
     QUnit.test("Should Highlight the Row", function(assert) {
         const sDiscountDate = "2026-11-17"
         const sReturnedValue = formatter.highlightRow(sDiscountDate)
 
-        assert.strictEqual(sReturnedValue, constants.ValueState.SUCCESS, "Correct State returned (Success).")
+        assert.strictEqual(sReturnedValue, constants.VALUESTATE.SUCCESS, "Correct State returned (Success).")
     });
 });
